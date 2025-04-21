@@ -20,7 +20,7 @@ CREATE TABLE profile (
   public_id TEXT UNIQUE DEFAULT '',
   name Name NOT NULL,
   email TEXT NOT NULL,
-  contact INT NOT NULL,
+  contact TEXT NOT NULL,
   address TEXT,
   birthday DATE CHECK (birthday <= CURRENT_DATE),
   image BYTEA,
@@ -39,11 +39,6 @@ CREATE TABLE tool (
   quantity INT CHECK (quantity > 0),
   location TEXT NOT NULL
 );
-CREATE TABLE category_tool (
-  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  category_id BIGINT REFERENCES category (id),
-  tool_id BIGINT REFERENCES tool (id)
-);
 CREATE TABLE request (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   public_id TEXT UNIQUE DEFAULT '',
@@ -58,7 +53,7 @@ CREATE TABLE request_tool (
 );
 CREATE TABLE request_status_history (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  status TEXT DEFAULT 'pending',
+  status STATUS DEFAULT 'pending',
   changed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   changed_by BIGINT REFERENCES profile (id),
   request_id BIGINT REFERENCES request (id)
