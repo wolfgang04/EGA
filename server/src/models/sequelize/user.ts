@@ -23,7 +23,7 @@ const User = sequelize.define(
       },
     },
   },
-  { freezeTableName: true, tableName: "user_auth" }
+  { freezeTableName: true, tableName: "user_auth", timestamps: false }
 );
 
 export default User;

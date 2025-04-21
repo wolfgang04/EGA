@@ -17,6 +17,7 @@ const Request = sequelize.define(
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
+      field: "created_at",
     },
   },
   { freezeTableName: true, tableName: "request" }

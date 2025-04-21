@@ -45,6 +45,7 @@ const Profile = sequelize.define(
         model: User,
         key: "id",
       },
+      field: "user_auth_id",
     },
   },
   { freezeTableName: true, tableName: "profile" }

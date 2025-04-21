@@ -15,9 +15,10 @@ User.hasMany(User, {
   foreignKey: "created_by",
 });
 
-Profile.hasOne(User, {
+Profile.belongsTo(User, {
   as: "userProfile",
   foreignKey: "userID",
+  targetKey: "id",
 });
 
 Request.belongsToMany(Tool, {
@@ -39,5 +40,7 @@ RequestHistory.belongsTo(Profile, {
   as: "setBy",
   foreignKey: "changed_by",
 });
+
+console.log(sequelize.models);
 
 export { sequelize, Profile, User, Request, RequestHistory, RequestTool, Tool };
