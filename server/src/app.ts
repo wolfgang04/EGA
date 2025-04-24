@@ -4,6 +4,8 @@ import session from "express-session";
 import { CLIENT_URL, SECRET } from "./constants";
 import authRoutes from "./routes/auth.route";
 import { authMiddleware } from "./controllers/middleware.controller";
+import userRoutes from "./routes/user.route";
+import categoryRoutes from "./routes/category.route";
 
 const app: express.Application = express();
 
@@ -32,6 +34,8 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
-// app.use(authMiddleware);
+app.use(authMiddleware);
+app.use("/api/user", userRoutes);
+app.use("/api/category", categoryRoutes);
 
 export default app;

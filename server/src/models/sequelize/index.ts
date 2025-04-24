@@ -6,7 +6,7 @@ import RequestTool from "./requestTool";
 import Tool from "./tool";
 import User from "./user";
 
-User.hasOne(User, {
+User.belongsTo(User, {
   as: "creator",
   foreignKey: "created_by",
 });
@@ -15,10 +15,14 @@ User.hasMany(User, {
   foreignKey: "created_by",
 });
 
+User.hasOne(Profile, {
+  as: "userProfile",
+  foreignKey: "userID",
+});
 Profile.belongsTo(User, {
   as: "userProfile",
   foreignKey: "userID",
-  targetKey: "id",
+  // targetKey: "id",
 });
 
 Request.belongsToMany(Tool, {
