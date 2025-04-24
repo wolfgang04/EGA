@@ -1,12 +1,31 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../../utils/db";
 
-const User = sequelize.define(
+interface UserAttributes {
+  id: number;
+  public_id: string;
+  password: string;
+  userType: "admin" | "employee";
+  created_by: number | null;
+}
+
+type UserCreationAttributes = Optional<UserAttributes, "id" | "public_id">;
+
+interface UserInstance
+  extends Model<UserAttributes, UserCreationAttributes>,
+    UserAttributes {}
+
+const User = sequelize.define<UserInstance>(
   "User",
   {
-    username: {
+    id: {
+      type: DataTypes.BIGINT,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    public_id: {
       type: DataTypes.STRING,
-      allowNull: false,
+      unique: true,
     },
     password: DataTypes.STRING,
     userType: {
@@ -16,7 +35,7 @@ const User = sequelize.define(
     },
     created_by: {
       type: DataTypes.BIGINT,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "User",
         key: "id",

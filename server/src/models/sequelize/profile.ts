@@ -5,20 +5,9 @@ import { sequelize } from "../../utils/db";
 const Profile = sequelize.define(
   "Profile",
   {
-    firstName: {
-      type: DataTypes.STRING,
+    name: {
+      type: DataTypes.JSONB,
       allowNull: false,
-      field: "name.first_name",
-    },
-    middleName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "name.middle_name",
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "name.last_name",
     },
     email: {
       type: DataTypes.STRING,
@@ -48,7 +37,7 @@ const Profile = sequelize.define(
       field: "user_auth_id",
     },
   },
-  { freezeTableName: true, tableName: "profile" }
+  { freezeTableName: true, tableName: "profile", timestamps: false }
 );
 
 export default Profile;

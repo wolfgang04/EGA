@@ -41,6 +41,4 @@ RequestHistory.belongsTo(Profile, {
   foreignKey: "changed_by",
 });
 
-console.log(sequelize.models);
-
 export { sequelize, Profile, User, Request, RequestHistory, RequestTool, Tool };

@@ -10,3 +10,4 @@ export const USER = process.env.USER;
 export const PASSWORD = process.env.PASSWORD;
 export const DATABASE = process.env.DATABASE;
 export const SECRET = process.env.SECRET;
+export const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
