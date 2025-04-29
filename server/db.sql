@@ -35,7 +35,8 @@ CREATE TABLE tool (
   public_id TEXT UNIQUE DEFAULT '',
   name TEXT NOT NULL,
   quantity INT CHECK (quantity > 0),
-  location TEXT NOT NULL
+  location TEXT NOT NULL,
+  category_id BIGINT REFERENCES category (id)
 );
 ----
 CREATE TABLE request (

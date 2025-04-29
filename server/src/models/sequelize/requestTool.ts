@@ -20,6 +20,7 @@ const RequestTool = sequelize.define(
         model: Tool,
         key: "id",
       },
+      field: "tool_id",
     },
     requestID: {
       type: DataTypes.BIGINT,
@@ -28,9 +29,10 @@ const RequestTool = sequelize.define(
         model: Request,
         key: "id",
       },
+      field: "request_id",
     },
   },
-  { freezeTableName: true, tableName: "request_tool" }
+  { freezeTableName: true, tableName: "request_tool", timestamps: false }
 );
 
 export default RequestTool;

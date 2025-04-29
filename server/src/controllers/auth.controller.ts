@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { createAccountRequestBody } from "../models/User";
 import { Profile, User } from "../models/sequelize";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../constants";
 import { validatePasswordInput } from "../utils/input";
+import { CreateAccountRequestBody } from "../models/Request.model";
 
 declare module "express-session" {
   interface SessionData {
@@ -12,7 +12,7 @@ declare module "express-session" {
 }
 
 export const createAccount = async (
-  req: Request<{}, {}, createAccountRequestBody>,
+  req: Request<{}, {}, CreateAccountRequestBody>,
   res: Response
 ): Promise<any> => {
   const {

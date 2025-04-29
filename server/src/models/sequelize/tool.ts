@@ -26,9 +26,10 @@ const Tool = sequelize.define(
         model: Category,
         key: "id",
       },
+      field: "category_id",
     },
   },
-  { freezeTableName: true, tableName: "tool" }
+  { freezeTableName: true, tableName: "tool", timestamps: false }
 );
 
 export default Tool;

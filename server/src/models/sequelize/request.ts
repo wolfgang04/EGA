@@ -1,7 +1,18 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../../utils/db";
 
-const Request = sequelize.define(
+interface RequestAttributes {
+  id: number;
+  publicID: string;
+}
+
+type RequestCreationAttributes = Optional<RequestAttributes, "id" | "publicID">;
+
+interface RequestInstance
+  extends Model<RequestAttributes, RequestCreationAttributes>,
+    RequestAttributes {}
+
+const Request = sequelize.define<RequestInstance>(
   "Request",
   {
     id: {
@@ -13,14 +24,10 @@ const Request = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: "",
       unique: true,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      field: "created_at",
+      field: "public_id",
     },
   },
-  { freezeTableName: true, tableName: "request" }
+  { freezeTableName: true, tableName: "request", timestamps: false }
 );
 
 export default Request;

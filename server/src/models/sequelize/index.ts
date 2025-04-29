@@ -1,4 +1,5 @@
 import { sequelize } from "../../utils/db";
+import Category from "./category";
 import Profile from "./profile";
 import Request from "./request";
 import RequestHistory from "./requestStatusHistory";
@@ -28,12 +29,17 @@ Profile.belongsTo(User, {
 Request.belongsToMany(Tool, {
   through: RequestTool,
   as: "tools",
-  foreignKey: "requestID",
+  foreignKey: "id",
 });
 Tool.belongsToMany(Request, {
   through: RequestTool,
   as: "requests",
-  foreignKey: "toolID",
+  foreignKey: "id",
+});
+
+Tool.belongsTo(Category, {
+  as: "categoryTool",
+  foreignKey: "categoryID",
 });
 
 RequestHistory.belongsTo(Request, {
