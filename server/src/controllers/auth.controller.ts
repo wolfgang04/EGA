@@ -44,7 +44,7 @@ export const createAccount = async (
     const user = await User.create({
       password: hashedPassword,
       userType,
-      created_by: Number(req.session.id),
+      created_by: Number(req.session.userID),
     });
 
     await Profile.create({

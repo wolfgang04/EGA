@@ -51,4 +51,18 @@ RequestHistory.belongsTo(Profile, {
   foreignKey: "changed_by",
 });
 
+RequestHistory.belongsTo(Profile, {
+  as: "changedByProfile",
+  foreignKey: "changed_by",
+});
+Profile.hasMany(RequestHistory, {
+  as: "requestHistories",
+  foreignKey: "changed_by",
+});
+
+Request.belongsTo(Profile, {
+  as: "requestByProfile",
+  foreignKey: "requestBy",
+});
+
 export { sequelize, Profile, User, Request, RequestHistory, RequestTool, Tool };

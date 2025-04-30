@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
-import { CreateRequestToolBody } from "../models/Request.model";
 import {
+  ChangeRequestStatus,
+  CreateRequestToolBody,
+} from "../models/Request.model";
+import {
+  Profile,
   Request as request,
   RequestHistory,
   RequestTool,
@@ -15,7 +19,10 @@ export const requestTools = async (
 
   const transaction = await sequelize.transaction();
   try {
-    const generateReq = await request.create({}, { transaction });
+    const generateReq = await request.create(
+      { requestBy: req.session.userID! },
+      { transaction }
+    );
 
     for (const tool of tools) {
       await RequestTool.create(
@@ -45,6 +52,80 @@ export const requestTools = async (
     if (error instanceof Error) {
       console.error("Error creating request:", error);
       return res.status(500).json({ msg: "Error creating request" });
+    } else {
+      console.error("Unknown error occured:", error);
+      return res.status(500).json({ msg: "Unknown error occured" });
+    }
+  }
+};
+
+export const getRequestUpdates = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const { page = 1, limit = 10 } = req.query;
+
+  try {
+    const requests = await RequestHistory.findAll({
+      limit: Number(limit),
+      offset: (Number(page) - 1) * Number(limit),
+      attributes: ["request_id", "status", "changed_by", "changed_at"],
+      order: [["changed_at", "DESC"]],
+      include: [
+        {
+          model: request,
+          as: "request",
+          attributes: ["public_id"],
+          include: [
+            {
+              model: Profile,
+              as: "requestByProfile",
+              attributes: ["name"],
+            },
+          ],
+        },
+        {
+          model: Profile,
+          as: "changedByProfile",
+          attributes: ["name"],
+        },
+      ],
+    });
+
+    return res.status(200).json(requests);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching requests:", error);
+      return res.status(500).json({ msg: "Error fetching requests" });
+    } else {
+      console.error("Unknown error occured:", error);
+      return res.status(500).json({ msg: "Unknown error occured" });
+    }
+  }
+};
+
+export const changeRequestStatus = async (
+  req: Request<{}, {}, ChangeRequestStatus>,
+  res: Response
+): Promise<any> => {
+  const { requestHistoryID, status } = req.body;
+
+  try {
+    const requestHistory = await RequestHistory.findByPk(requestHistoryID);
+    if (!requestHistory)
+      return res.status(400).json({ msg: "Request history not found" });
+
+    await RequestHistory.create({
+      status,
+      changedBy: req.session.userID!,
+      requestID: requestHistory.requestID,
+    });
+
+    return res.status(200).json({ msg: "Request status successfully changed" });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error changing request status:", error);
+      return res.status(500).json({ msg: "Error changing request status" });
     } else {
       console.error("Unknown error occured:", error);
       return res.status(500).json({ msg: "Unknown error occured" });

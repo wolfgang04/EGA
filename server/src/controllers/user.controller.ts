@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Profile, User } from "../models/sequelize";
 
 export const getUsers = async (req: Request, res: Response): Promise<any> => {
-  const { page = 1, limit = 10 } = req.body;
+  const { page = 1, limit = 10 } = req.query;
 
   try {
     const users = await User.findAll({
@@ -32,7 +32,12 @@ export const getUsers = async (req: Request, res: Response): Promise<any> => {
 };
 
 export const getUser = async (req: Request, res: Response): Promise<any> => {
-  const { public_id } = req.body;
+  const { public_id } = req.query;
+
+  if (!public_id || typeof public_id !== "string")
+    return res
+      .status(400)
+      .json({ msg: "public id is required and must be a string" });
 
   try {
     const user = await User.findOne({

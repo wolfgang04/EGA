@@ -25,3 +25,15 @@ interface RequestTool {
   note: string;
   toolID: number;
 }
+
+enum Status {
+  pending = "pending",
+  approved = "approved",
+  borrowed = "borrowed",
+  returned = "returned",
+}
+
+export interface ChangeRequestStatus {
+  requestHistoryID: number;
+  status: Status;
+}
