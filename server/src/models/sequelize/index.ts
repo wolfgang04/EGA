@@ -7,6 +7,7 @@ import RequestTool from "./requestTool";
 import Tool from "./tool";
 import User from "./user";
 
+// user - profile association
 User.belongsTo(User, {
   as: "creator",
   foreignKey: "created_by",
@@ -15,7 +16,6 @@ User.hasMany(User, {
   as: "createdUsers",
   foreignKey: "created_by",
 });
-
 User.hasOne(Profile, {
   as: "userProfile",
   foreignKey: "userID",
@@ -25,6 +25,13 @@ Profile.belongsTo(User, {
   foreignKey: "userID",
 });
 
+// tool - category association
+Tool.belongsTo(Category, {
+  as: "categoryTool",
+  foreignKey: "categoryID",
+});
+
+// request - tool association
 Request.belongsToMany(Tool, {
   through: RequestTool,
   as: "tools",
@@ -36,11 +43,7 @@ Tool.belongsToMany(Request, {
   foreignKey: "toolID",
 });
 
-Tool.belongsTo(Category, {
-  as: "categoryTool",
-  foreignKey: "categoryID",
-});
-
+// request - requestHistory association
 Request.hasMany(RequestHistory, {
   as: "statuses",
   foreignKey: "requestID",
@@ -50,6 +53,7 @@ RequestHistory.belongsTo(Request, {
   foreignKey: "requestID",
 });
 
+// request - requestTool association
 Request.hasMany(RequestTool, {
   as: "requestFiled",
   foreignKey: "requestID",
@@ -59,6 +63,7 @@ RequestTool.belongsTo(Tool, {
   foreignKey: "toolID",
 });
 
+// requestHistory - profile association
 RequestHistory.belongsTo(Profile, {
   as: "changedByProfile",
   foreignKey: "changed_by",
