@@ -28,6 +28,10 @@ const Tool = sequelize.define(
       },
       field: "category_id",
     },
+    publicID: {
+      type: DataTypes.STRING,
+      field: "public_id",
+    },
   },
   { freezeTableName: true, tableName: "tool", timestamps: false }
 );

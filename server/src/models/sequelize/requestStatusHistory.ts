@@ -15,11 +15,12 @@ interface RequestHistoryAttributes {
   status: Status;
   changedBy: number;
   requestID: number;
+  changedAt: Date;
 }
 
 type RequestHistoryCreationAttributes = Optional<
   RequestHistoryAttributes,
-  "id" | "status"
+  "id" | "status" | "changedAt"
 >;
 
 interface RequestHistoryInstance
@@ -55,6 +56,11 @@ const RequestHistory = sequelize.define<RequestHistoryInstance>(
         key: "id",
       },
       field: "request_id",
+    },
+    changedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: "changed_at",
     },
   },
   {

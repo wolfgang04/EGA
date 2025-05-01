@@ -23,18 +23,17 @@ User.hasOne(Profile, {
 Profile.belongsTo(User, {
   as: "userProfile",
   foreignKey: "userID",
-  // targetKey: "id",
 });
 
 Request.belongsToMany(Tool, {
   through: RequestTool,
   as: "tools",
-  foreignKey: "id",
+  foreignKey: "requestID",
 });
 Tool.belongsToMany(Request, {
   through: RequestTool,
   as: "requests",
-  foreignKey: "id",
+  foreignKey: "toolID",
 });
 
 Tool.belongsTo(Category, {
@@ -42,13 +41,22 @@ Tool.belongsTo(Category, {
   foreignKey: "categoryID",
 });
 
+Request.hasMany(RequestHistory, {
+  as: "statuses",
+  foreignKey: "requestID",
+});
 RequestHistory.belongsTo(Request, {
   as: "request",
   foreignKey: "requestID",
 });
-RequestHistory.belongsTo(Profile, {
-  as: "setBy",
-  foreignKey: "changed_by",
+
+Request.hasMany(RequestTool, {
+  as: "requestFiled",
+  foreignKey: "requestID",
+});
+RequestTool.belongsTo(Tool, {
+  as: "requestedTool",
+  foreignKey: "toolID",
 });
 
 RequestHistory.belongsTo(Profile, {

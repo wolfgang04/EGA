@@ -9,7 +9,9 @@ import {
   RequestHistory,
   RequestTool,
   sequelize,
+  Tool,
 } from "../models/sequelize";
+import Category from "../models/sequelize/category";
 
 export const requestTools = async (
   req: Request<{}, {}, CreateRequestToolBody>,
@@ -126,6 +128,65 @@ export const changeRequestStatus = async (
     if (error instanceof Error) {
       console.error("Error changing request status:", error);
       return res.status(500).json({ msg: "Error changing request status" });
+    } else {
+      console.error("Unknown error occured:", error);
+      return res.status(500).json({ msg: "Unknown error occured" });
+    }
+  }
+};
+
+export const requestOverview = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const { requestID } = req.query;
+
+  if (!requestID || Array.isArray(requestID) || isNaN(Number(requestID)))
+    return res.status(400).json({ msg: "Invalid or missing requestID" });
+
+  try {
+    const requestDetails = await request.findOne({
+      where: { id: Number(requestID) },
+      include: [
+        {
+          model: RequestTool,
+          as: "requestFiled",
+          attributes: ["quantity", "note"],
+          include: [
+            {
+              model: Tool,
+              as: "requestedTool",
+              attributes: ["name", "location", "categoryID", "publicID"],
+              include: [
+                {
+                  model: Category,
+                  as: "categoryTool",
+                  attributes: ["name"],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: RequestHistory,
+          as: "statuses",
+          attributes: ["status", "changedAt"],
+          include: [
+            {
+              model: Profile,
+              as: "changedByProfile",
+              attributes: ["name"],
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.status(200).json(requestDetails);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching request details:", error);
+      return res.status(500).json({ msg: "Error fetching request details" });
     } else {
       console.error("Unknown error occured:", error);
       return res.status(500).json({ msg: "Unknown error occured" });
