@@ -1,6 +1,35 @@
 import "./App.css";
-import { Routes } from "react-router";
+import { Route, Routes, useNavigate } from "react-router";
+import Login from "./pages/Login";
+import { useEffect } from "react";
+import axios from "axios";
+import AdminDashboard from "./pages/AdminDasboard";
+import IsAuth from "./components/IsAuth";
 
 export default function App() {
-  return <Routes></Routes>;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 404) {
+          navigate("/login");
+        }
+        return Promise.reject(error);
+      },
+    );
+
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+    };
+  }, [navigate]);
+
+  return (
+    <Routes>
+      <Route path="/" element={<IsAuth />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/history" element={<AdminDashboard />} />
+    </Routes>
+  );
 }

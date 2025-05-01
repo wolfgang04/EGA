@@ -8,6 +8,7 @@ import { CreateAccountRequestBody } from "../models/Request.model";
 declare module "express-session" {
   interface SessionData {
     userID: number;
+    accType: "admin" | "employee";
   }
 }
 
@@ -82,14 +83,19 @@ export const login = async (req: Request, res: Response): Promise<any> => {
 
   try {
     const user = await User.findOne({ where: { public_id: username } });
+    if (!user) return res.status(401).json({ msg: "Invalid credentials" });
+
     const isMatch = await bcrypt.compare(password, user!.password);
 
     if (isMatch) {
       req.session.userID = user!.id;
-      return res.status(200).json({ msg: "Logged in successfully!" });
-    } else {
-      return res.status(401).json({ msg: "Invalid credentials" });
+      req.session.accType = user.userType;
+      return res
+        .status(200)
+        .json({ msg: "Logged in successfully!", accType: user.userType });
     }
+
+    return res.status(401).json({ msg: "Invalid credentials" });
   } catch (err) {
     if (err instanceof Error) {
       console.error("Error logging in:", err);
@@ -143,4 +149,14 @@ export const resetDefaultPass = async (
       return res.status(500).json({ msg: "Unknown error occured" });
     }
   }
+};
+
+export const authCheck = (req: Request, res: Response): Promise<any> => {
+  return new Promise((resolve) => {
+    if (!req.session.userID) {
+      resolve(res.status(401).json({ msg: "Unauthorized" }));
+    } else {
+      resolve(res.status(200).json({ accType: req.session.accType }));
+    }
+  });
 };
