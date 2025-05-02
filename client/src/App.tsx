@@ -6,6 +6,8 @@ import axios from "axios";
 import AdminDashboard from "./pages/AdminDasboard";
 import IsAuth from "./components/IsAuth";
 import RequestOverview from "./pages/RequestOverview";
+import Categories from "./pages/Categories";
+import Tool from "./pages/Tool";
 
 export default function App() {
   const navigate = useNavigate();
@@ -32,6 +34,8 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/history" element={<AdminDashboard />} />
       <Route path="/request/:requestID" element={<RequestOverview />} />
+      <Route path="/tools" element={<Categories />} />
+      <Route path="/tools/:tool" element={<Tool />} />
     </Routes>
   );
 }

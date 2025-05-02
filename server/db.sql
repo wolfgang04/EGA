@@ -25,7 +25,7 @@ CREATE TABLE profile (
 ----
 CREATE TABLE category (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name TEXT NOT NULL,
+  name TEXT UNIQUE NOT NULL,
   description TEXT,
   image BYTEA
 );

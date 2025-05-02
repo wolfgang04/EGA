@@ -30,7 +30,10 @@ export const createCategory = async (
   }
 };
 
-export const getCategories = async (res: Response): Promise<any> => {
+export const getCategories = async (
+  _req: Request,
+  res: Response
+): Promise<any> => {
   try {
     const categories = await Category.findAll();
 

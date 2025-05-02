@@ -4,14 +4,14 @@ import { Request } from "../../models/Request.model";
 
 const ToolTable: React.FC<{ requests: Request[] }> = ({ requests }) => {
   return (
-    <table className="w-1/2">
+    <table>
       <thead>
         <tr>
-          <td>Tool ID</td>
-          <td>Tool type</td>
-          <td>Tool name</td>
-          <td>Quantity</td>
-          <td>Location</td>
+          <th>Tool ID</th>
+          <th>Tool type</th>
+          <th>Tool name</th>
+          <th>Quantity</th>
+          <th>Location</th>
         </tr>
       </thead>
 

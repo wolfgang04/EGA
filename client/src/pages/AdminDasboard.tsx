@@ -28,7 +28,7 @@ const AdminDashboard = () => {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center">
+    <div className="flex flex-col items-center justify-center">
       <AdminNavbar />
 
       <table>

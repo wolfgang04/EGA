@@ -6,12 +6,12 @@ const StatusTable: React.FC<{ statusChanges: StatusDetails[] }> = ({
   statusChanges,
 }) => {
   return (
-    <table className="w-1/2">
+    <table>
       <thead>
         <tr>
-          <td>Changed by</td>
-          <td>Status</td>
-          <td>Changed at</td>
+          <th>Changed by</th>
+          <th>Status</th>
+          <th>Changed at</th>
         </tr>
       </thead>
 

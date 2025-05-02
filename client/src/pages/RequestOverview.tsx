@@ -5,6 +5,7 @@ import SERVER from "../SERVER";
 import type { RequestOverview } from "../models/Request.model";
 import ToolTable from "../components/RequestOverview/ToolTable";
 import StatusTable from "../components/RequestOverview/StatusTable";
+import AdminNavbar from "../components/AdminNavbar";
 
 const RequestOverview = () => {
   const [requestDetails, setRequestDetails] = useState<RequestOverview>();
@@ -22,7 +23,6 @@ const RequestOverview = () => {
         });
 
         setRequestDetails(data);
-        console.log(data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -36,7 +36,8 @@ const RequestOverview = () => {
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <div className="">
+    <div className="flex flex-col items-center justify-center">
+      <AdminNavbar />
       <p>Request ID: {requestDetails?.publicID}</p>
       <p>
         Request By:{" "}

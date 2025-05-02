@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+
 table {
   @apply my-5
+}
+
+button {
+  @apply cursor-pointer hover:bg-gray-200
+}
+
+input {
+  @apply outline-none
+}
+
+table {
+  @apply w-1/2
+}
+
+tbody > tr {
+  @apply hover:bg-black/5 text-center
 }
