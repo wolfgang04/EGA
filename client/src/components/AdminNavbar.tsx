@@ -19,20 +19,22 @@ const AdminNavbar = () => {
   };
 
   return (
-    <div className="nav flex justify-center gap-2">
+    <div className="mb-5 flex justify-center gap-2">
       <NavLink to="/profile">
-        <p>profile</p>
+        <p className="cursor-pointer hover:underline">profile</p>
       </NavLink>
       <NavLink to="/history">
-        <p>requests history</p>
+        <p className="cursor-pointer hover:underline">requests history</p>
       </NavLink>
       <NavLink to="/tools">
-        <p>tools</p>
+        <p className="cursor-pointer hover:underline">tools</p>
       </NavLink>
       <NavLink to="/users">
-        <p>users</p>
+        <p className="cursor-pointer hover:underline">users</p>
       </NavLink>
-      <p onClick={handleLogout}>logout</p>
+      <p className="cursor-pointer hover:underline" onClick={handleLogout}>
+        logout
+      </p>
     </div>
   );
 };

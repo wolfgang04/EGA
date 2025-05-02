@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import AdminDashboard from "./pages/AdminDasboard";
 import IsAuth from "./components/IsAuth";
+import RequestOverview from "./pages/RequestOverview";
 
 export default function App() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function App() {
     const interceptor = axios.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response && error.response.status === 404) {
+        if (error.response && error.response.status === 401) {
           navigate("/login");
         }
         return Promise.reject(error);
@@ -30,6 +31,7 @@ export default function App() {
       <Route path="/" element={<IsAuth />} />
       <Route path="/login" element={<Login />} />
       <Route path="/history" element={<AdminDashboard />} />
+      <Route path="/request/:requestID" element={<RequestOverview />} />
     </Routes>
   );
 }

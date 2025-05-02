@@ -1,5 +1,5 @@
 @import "tailwindcss";
 
-.nav > p {
-  @apply cursor-pointer hover:underline
+table {
+  @apply my-5
 }

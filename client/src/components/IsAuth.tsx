@@ -15,7 +15,7 @@ const IsAuth = () => {
 
         if (res.status === 200) {
           if (res.data.accType === "admin") navigate("/history");
-        } else {
+        } else if (res.status === 401) {
           navigate("/login");
         }
       } catch (error) {
