@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusDetails } from "../../models/Request.model";
+import { StatusDetails } from "../../../models/Request.model";
 import StatusTableRow from "./StatusTableRow";
 
 const StatusTable: React.FC<{ statusChanges: StatusDetails[] }> = ({

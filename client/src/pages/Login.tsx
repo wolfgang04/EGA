@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [hasError, setHasError] = useState(false);
   const navigate = useNavigate();
 
   const handleChangeUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,7 +20,7 @@ const Login = () => {
     if (e) e.preventDefault();
 
     try {
-      const { status, data } = await axios.post(
+      await axios.post(
         `${SERVER}/auth/login`,
         {
           username,
@@ -28,11 +29,10 @@ const Login = () => {
         { withCredentials: true },
       );
 
-      if (status === 200) {
-        if (data.accType === "admin") navigate("/history");
-      }
+      navigate("/");
     } catch (error) {
       console.log(error);
+      setHasError(true);
     }
   };
 
@@ -52,6 +52,12 @@ const Login = () => {
         value={password}
         onChange={(e) => handleChangePassword(e)}
       />
+      {hasError && (
+        <div id="name-error" className={`text-red-600`}>
+          Invalid username or password
+        </div>
+      )}
+
       <button className="cursor-pointer">submit</button>
     </form>
   );

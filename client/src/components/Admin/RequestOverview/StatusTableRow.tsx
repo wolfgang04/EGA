@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusDetails } from "../../models/Request.model";
+import { StatusDetails } from "../../../models/Request.model";
 
 const StatusTableRow: React.FC<{ changes: StatusDetails }> = ({ changes }) => {
   const formattedDate = new Date(changes.changedAt).toLocaleString("en-US", {

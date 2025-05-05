@@ -9,6 +9,7 @@ import RequestOverview from "./pages/RequestOverview";
 import Categories from "./pages/Categories";
 import Tool from "./pages/Tool";
 import Users from "./pages/Users";
+import AdminNavbar from "./components/Admin/AdminNavbar";
 
 export default function App() {
   const navigate = useNavigate();
@@ -33,12 +34,14 @@ export default function App() {
     <Routes>
       <Route path="/" element={<IsAuth />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/history" element={<AdminDashboard />} />
-      <Route path="/request/:requestID" element={<RequestOverview />} />
-      <Route path="/tools" element={<Categories />} />
-      <Route path="/tools/:tool" element={<Tool />} />
-      <Route path="/users" element={<Users />} />
-      {/* <Route path="/users/:user" element={<Tool />} /> */}
+      <Route path="/admin" element={<AdminNavbar />}>
+        <Route path="history" element={<AdminDashboard />} />
+        <Route path="request/:requestID" element={<RequestOverview />} />
+        <Route path="tools" element={<Categories />} />
+        <Route path="tools/:tool" element={<Tool />} />
+        <Route path="users" element={<Users />} />
+        {/* <Route path="/users/:user" element={<Tool />} /> */}
+      </Route>
     </Routes>
   );
 }

@@ -1,10 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SERVER from "../SERVER";
-import AdminNavbar from "../components/AdminNavbar";
 import { Category } from "../models/Category.model";
 import { NavLink } from "react-router";
-import Create from "../components/Categories/Create";
+import Create from "../components/Admin/Categories/Create";
 
 const Categories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -41,9 +40,10 @@ const Categories = () => {
   };
 
   return (
-    <div className="">
-      <AdminNavbar />
-      <button onClick={() => setCreateCategory(true)}>Create</button>
+    <div className="flex flex-col items-center justify-center">
+      <button onClick={() => setCreateCategory(true)} className="w-fit">
+        Create
+      </button>
       {createCategory && (
         <Create
           addCategory={handleAddCategory}

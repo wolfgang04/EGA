@@ -1,5 +1,5 @@
 import React from "react";
-import { Request } from "../../models/Request.model";
+import { Request } from "../../../models/Request.model";
 import { NavLink } from "react-router";
 
 const RequestedToolTableRow: React.FC<{ tool: Request }> = ({ tool }) => {
@@ -8,7 +8,7 @@ const RequestedToolTableRow: React.FC<{ tool: Request }> = ({ tool }) => {
       <td>{tool.requestedTool.publicID}</td>
       <td>
         <NavLink
-          to={`/tools/${tool.requestedTool.categoryTool.name}`}
+          to={`../tools/${tool.requestedTool.categoryTool.name}`}
           state={{ categoryID: tool.requestedTool.categoryID }}
         >
           <p className="hover:underline">

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import AdminNavbar from "../components/AdminNavbar";
 import { useLocation } from "react-router";
 import axios from "axios";
 import SERVER from "../SERVER";
 import type { Tool, ToolDetails } from "../models/Tool.model";
-import ToolTable from "../components/Tool/ToolTable";
-import AddTool from "../components/Tool/AddTool";
+import ToolTable from "../components/Admin/Tool/ToolTable";
+import AddTool from "../components/Admin/Tool/AddTool";
 
 const Tool = () => {
   const [tools, setTools] = useState<Tool[]>([]);
@@ -47,7 +46,6 @@ const Tool = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <AdminNavbar />
       <button onClick={() => setIsVisible(true)}>Add</button>
       {isVisible && (
         <AddTool

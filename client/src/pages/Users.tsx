@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import AdminNavbar from "../components/AdminNavbar";
 import axios from "axios";
 import SERVER from "../SERVER";
 import { NewUser, UserRecord } from "../models/User.model";
-import UsersTable from "../components/Users/UsersTable";
-import AddUser from "../components/Users/AddUser";
+import UsersTable from "../components/Admin/Users/UsersTable";
+import AddUser from "../components/Admin/Users/AddUser";
 
 const Users = () => {
   const [users, setUsers] = useState<UserRecord[]>([]);
@@ -63,7 +62,6 @@ const Users = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <AdminNavbar />
       <button onClick={() => setIsVisible(true)}>add</button>
       {isVisible && (
         <AddUser onClose={() => setIsVisible(false)} onAdd={handleAddUser} />

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ToolDetails } from "../../models/Tool.model";
+import { ToolDetails } from "../../../models/Tool.model";
 
 interface Props {
   onAddTool: (toolDetails: ToolDetails) => void;

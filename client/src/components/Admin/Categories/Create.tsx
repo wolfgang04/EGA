@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import SERVER from "../../SERVER";
+import SERVER from "../../../SERVER";
 
 interface Props {
   addCategory: (name: string) => void;

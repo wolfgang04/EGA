@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NewUser, UserProfile, UserType } from "../../models/User.model";
+import { NewUser, UserProfile, UserType } from "../../../models/User.model";
 import AddUserInputs from "./AddUserInputs";
 
 interface Props {

@@ -1,5 +1,5 @@
 import React from "react";
-import { UserRecord } from "../../models/User.model";
+import { UserRecord } from "../../../models/User.model";
 
 const UsersTableRow: React.FC<{ user: UserRecord }> = ({ user }) => {
   const formattedDate = new Date(user.created_at).toLocaleString("en-US", {

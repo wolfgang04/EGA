@@ -1,5 +1,5 @@
 import React from "react";
-import { Tool } from "../../models/Tool.model";
+import { Tool } from "../../../models/Tool.model";
 
 const ToolTableRow: React.FC<{ toolDetails: Tool }> = ({ toolDetails }) => {
   return (

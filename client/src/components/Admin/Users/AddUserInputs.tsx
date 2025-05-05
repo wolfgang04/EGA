@@ -1,5 +1,5 @@
 import React from "react";
-import { UserProfile, UserType } from "../../models/User.model";
+import { UserProfile, UserType } from "../../../models/User.model";
 
 interface Props {
   onChangeFirstName: (e: React.ChangeEvent<HTMLInputElement>) => void;

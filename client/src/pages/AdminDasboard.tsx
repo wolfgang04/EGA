@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import AdminNavbar from "../components/AdminNavbar";
 import axios from "axios";
 import SERVER from "../SERVER";
 import { Histories } from "../models/History.model";
-import HistoryTableRow from "../components/Requests/HistoryTableRow";
+import HistoryTableRow from "../components/Admin/Requests/HistoryTableRow";
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -29,8 +28,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <AdminNavbar />
-
       <table>
         <thead>
           <tr>

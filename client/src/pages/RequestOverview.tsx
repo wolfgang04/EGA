@@ -3,16 +3,15 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import SERVER from "../SERVER";
 import type { RequestOverview } from "../models/Request.model";
-import ToolTable from "../components/RequestOverview/ToolTable";
-import StatusTable from "../components/RequestOverview/StatusTable";
-import AdminNavbar from "../components/AdminNavbar";
+import ToolTable from "../components/Admin/RequestOverview/ToolTable";
+import StatusTable from "../components/Admin/RequestOverview/StatusTable";
 
 const RequestOverview = () => {
   const [requestDetails, setRequestDetails] = useState<RequestOverview>();
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
-  const requestID = location.pathname.slice(12);
+  const requestID = location.pathname.slice(-1);
 
   useEffect(() => {
     const fetchRequestOverview = async () => {
@@ -37,7 +36,6 @@ const RequestOverview = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <AdminNavbar />
       <p>Request ID: {requestDetails?.publicID}</p>
       <p>
         Request By:{" "}

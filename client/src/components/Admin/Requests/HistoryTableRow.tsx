@@ -1,12 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import { History } from "../../models/History.model";
+import { History } from "../../../models/History.model";
 
 const HistoryTableRow: React.FC<{ history: History }> = ({ history }) => {
   const navigate = useNavigate();
 
   const viewRequestDetails = () => {
-    navigate(`/request/${history.request.public_id}`);
+    navigate(`../request/${history.request.public_id}`);
   };
 
   const formattedDate = new Date(history.changed_at).toLocaleString("en-US", {

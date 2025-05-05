@@ -1,5 +1,5 @@
 import React from "react";
-import { UserRecord } from "../../models/User.model";
+import { UserRecord } from "../../../models/User.model";
 import UsersTableRow from "./UsersTableRow";
 
 const UsersTable: React.FC<{ users: UserRecord[] }> = ({ users }) => {

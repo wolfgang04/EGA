@@ -1,6 +1,6 @@
 import React from "react";
 import RequestedToolTableRow from "./RequestedToolTableRow";
-import { Request } from "../../models/Request.model";
+import { Request } from "../../../models/Request.model";
 
 const ToolTable: React.FC<{ requests: Request[] }> = ({ requests }) => {
   return (
