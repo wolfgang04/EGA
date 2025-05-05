@@ -4,3 +4,9 @@ export interface Tool {
   location: string;
   quantity: number;
 }
+
+export type ToolDetails = {
+  name: string;
+  quantity: number;
+  location: string;
+};

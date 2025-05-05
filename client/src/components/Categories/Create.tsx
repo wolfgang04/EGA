@@ -44,7 +44,7 @@ const Create: React.FC<Props> = ({ close, addCategory }) => {
           onChange={(e) => handleChangeCategory(e)}
         />
       </form>
-      <button className="block" onClick={() => close()}>
+      <button className="block w-full" onClick={() => close()}>
         close
       </button>
     </div>

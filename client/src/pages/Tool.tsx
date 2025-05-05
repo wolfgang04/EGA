@@ -3,12 +3,30 @@ import AdminNavbar from "../components/AdminNavbar";
 import { useLocation } from "react-router";
 import axios from "axios";
 import SERVER from "../SERVER";
-import type { Tool } from "../models/Tool.model";
+import type { Tool, ToolDetails } from "../models/Tool.model";
 import ToolTable from "../components/Tool/ToolTable";
+import AddTool from "../components/Tool/AddTool";
 
 const Tool = () => {
   const [tools, setTools] = useState<Tool[]>([]);
+  const [isVisible, setIsVisible] = useState(false);
   const { state } = useLocation();
+
+  const handleAddTool = async (toolDetails: ToolDetails) => {
+    try {
+      await axios.post(
+        `${SERVER}/tool/create`,
+        { ...toolDetails, categoryID: state.categoryID },
+        {
+          withCredentials: true,
+        },
+      );
+
+      setTools((prevTools) => [...prevTools, { ...toolDetails, publicID: "" }]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const fetchTools = async () => {
@@ -19,18 +37,24 @@ const Tool = () => {
         });
 
         setTools(data);
-        console.log(data);
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchTools();
-  }, []);
+  }, [tools]);
 
   return (
     <div className="flex flex-col items-center justify-center">
       <AdminNavbar />
+      <button onClick={() => setIsVisible(true)}>Add</button>
+      {isVisible && (
+        <AddTool
+          onAddTool={handleAddTool}
+          onClose={() => setIsVisible(false)}
+        />
+      )}
 
       <ToolTable Tools={tools} />
     </div>

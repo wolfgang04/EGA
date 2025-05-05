@@ -3,7 +3,7 @@ import AdminNavbar from "../components/AdminNavbar";
 import axios from "axios";
 import SERVER from "../SERVER";
 import { Histories } from "../models/History.model";
-import HistoryTableRow from "../components/tables/HistoryTableRow";
+import HistoryTableRow from "../components/Requests/HistoryTableRow";
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);

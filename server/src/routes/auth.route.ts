@@ -9,7 +9,7 @@ import {
 
 const router = Router();
 
-router.post("/createAccount", createAccount);
+router.post("/create", createAccount);
 router.post("/login", login);
 router.post("/resetDefaultPass", resetDefaultPass);
 router.post("/logout", logout);

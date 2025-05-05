@@ -14,9 +14,13 @@ input {
 }
 
 table {
-  @apply w-1/2
+  @apply min-w-1/2
 }
 
 tbody > tr {
   @apply hover:bg-black/5 text-center
+}
+
+td {
+  @apply hover:bg-black/10
 }
