@@ -3,7 +3,7 @@ type RequestStatus = "pending" | "approved" | "borrowed" | "returned";
 export interface RequestOverview {
   id: string; // The request ID
   publicID: string; // Public identifier for the request
-  requestBy: null | {
+  requestByProfile: null | {
     name: {
       first: string;
       middle?: string;

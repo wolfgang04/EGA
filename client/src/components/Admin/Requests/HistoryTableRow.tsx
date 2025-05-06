@@ -19,9 +19,9 @@ const HistoryTableRow: React.FC<{ history: History }> = ({ history }) => {
   return (
     <tr className="text-center" onClick={viewRequestDetails}>
       <td>{history.request.public_id}</td>
-      <td>{history.request.requestByProfile?.name.first}</td>
+      <td>{`${history.changedByProfile.name.first} ${history.changedByProfile.name.middle} ${history.changedByProfile.name.last}`}</td>
       <td>{history.status}</td>
-      <td>{`${history.changedByProfile.name.last}, ${history.changedByProfile.name.first} ${history.changedByProfile.name.middle}`}</td>
+      <td>{`${history.changedByProfile.name.first} ${history.changedByProfile.name.middle} ${history.changedByProfile.name.last}`}</td>
       <td>{formattedDate}</td>
     </tr>
   );

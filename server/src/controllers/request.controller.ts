@@ -148,6 +148,7 @@ export const requestOverview = async (
   try {
     const requestDetails = await request.findOne({
       where: { id: Number(requestID) },
+      attributes: ["request_by"],
       include: [
         {
           model: RequestTool,
@@ -179,6 +180,11 @@ export const requestOverview = async (
               attributes: ["name"],
             },
           ],
+        },
+        {
+          model: Profile,
+          as: "requestByProfile",
+          attributes: ["name"],
         },
       ],
     });

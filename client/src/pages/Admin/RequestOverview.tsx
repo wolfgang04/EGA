@@ -39,7 +39,7 @@ const RequestOverview = () => {
       <p>Request ID: {requestDetails?.publicID}</p>
       <p>
         Request By:{" "}
-        {`${requestDetails?.requestBy?.name.last}, ${requestDetails?.requestBy?.name.first} ${requestDetails?.requestBy?.name.middle}`}
+        {`${requestDetails?.requestByProfile?.name.last}, ${requestDetails?.requestByProfile?.name.first} ${requestDetails?.requestByProfile?.name.middle}`}
       </p>
 
       <ToolTable requests={requestDetails?.requestFiled || []} />
