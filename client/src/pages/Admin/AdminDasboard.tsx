@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import SERVER from "../SERVER";
-import { Histories } from "../models/History.model";
-import HistoryTableRow from "../components/Admin/Requests/HistoryTableRow";
+import SERVER from "../../SERVER";
+import { Histories } from "../../models/History.model";
+import HistoryTableRow from "../../components/Admin/Requests/HistoryTableRow";
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);

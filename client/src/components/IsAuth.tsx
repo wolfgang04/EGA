@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import SERVER from "../SERVER";
 
 const IsAuth = () => {
@@ -15,6 +15,7 @@ const IsAuth = () => {
 
         if (res.status === 200) {
           if (res.data.accType === "admin") navigate("/admin/history");
+          else navigate("/user/requests");
         } else if (res.status === 401) {
           navigate("/login");
         }

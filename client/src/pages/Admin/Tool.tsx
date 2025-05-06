@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import axios from "axios";
-import SERVER from "../SERVER";
-import type { Tool, ToolDetails } from "../models/Tool.model";
-import ToolTable from "../components/Admin/Tool/ToolTable";
-import AddTool from "../components/Admin/Tool/AddTool";
+import SERVER from "../../SERVER";
+import type { Tool, ToolDetails } from "../../models/Tool.model";
+import ToolTable from "../../components/Admin/Tool/ToolTable";
+import AddTool from "../../components/Admin/Tool/AddTool";
 
 const Tool = () => {
   const [tools, setTools] = useState<Tool[]>([]);

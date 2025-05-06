@@ -3,13 +3,16 @@ import { Route, Routes, useNavigate } from "react-router";
 import Login from "./pages/Login";
 import { useEffect } from "react";
 import axios from "axios";
-import AdminDashboard from "./pages/AdminDasboard";
+import AdminDashboard from "./pages/Admin/AdminDasboard";
 import IsAuth from "./components/IsAuth";
-import RequestOverview from "./pages/RequestOverview";
-import Categories from "./pages/Categories";
-import Tool from "./pages/Tool";
-import Users from "./pages/Users";
+import RequestOverview from "./pages/Admin/RequestOverview";
+import Categories from "./pages/Admin/Categories";
+import Tool from "./pages/Admin/Tool";
+import Users from "./pages/Admin/Users";
 import AdminNavbar from "./components/Admin/AdminNavbar";
+import Navbar from "./components/Employee/Navbar";
+import Requests from "./components/Employee/Requests/Requests";
+import Tools from "./pages/Employee/Tools";
 
 export default function App() {
   const navigate = useNavigate();
@@ -41,6 +44,11 @@ export default function App() {
         <Route path="tools/:tool" element={<Tool />} />
         <Route path="users" element={<Users />} />
         {/* <Route path="/users/:user" element={<Tool />} /> */}
+      </Route>
+
+      <Route path="/user" element={<Navbar />}>
+        <Route path="requests" element={<Requests />} />
+        <Route path="tools" element={<Tools />} />
       </Route>
     </Routes>
   );

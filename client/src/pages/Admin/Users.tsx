@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import SERVER from "../SERVER";
-import { NewUser, UserRecord } from "../models/User.model";
-import UsersTable from "../components/Admin/Users/UsersTable";
-import AddUser from "../components/Admin/Users/AddUser";
+import SERVER from "../../SERVER";
+import { NewUser, UserRecord } from "../../models/User.model";
+import UsersTable from "../../components/Admin/Users/UsersTable";
+import AddUser from "../../components/Admin/Users/AddUser";
 
 const Users = () => {
   const [users, setUsers] = useState<UserRecord[]>([]);

@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import SERVER from "../SERVER";
-import { Category } from "../models/Category.model";
+import SERVER from "../../SERVER";
+import { Category } from "../../models/Category.model";
 import { NavLink } from "react-router";
-import Create from "../components/Admin/Categories/Create";
+import Create from "../../components/Admin/Categories/Create";
 
 const Categories = () => {
   const [categories, setCategories] = useState<Category[]>([]);

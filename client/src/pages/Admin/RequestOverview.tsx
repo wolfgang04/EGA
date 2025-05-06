@@ -1,10 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
-import SERVER from "../SERVER";
-import type { RequestOverview } from "../models/Request.model";
-import ToolTable from "../components/Admin/RequestOverview/ToolTable";
-import StatusTable from "../components/Admin/RequestOverview/StatusTable";
+import SERVER from "../../SERVER";
+import type { RequestOverview } from "../../models/Request.model";
+import ToolTable from "../../components/Admin/RequestOverview/ToolTable";
+import StatusTable from "../../components/Admin/RequestOverview/StatusTable";
 
 const RequestOverview = () => {
   const [requestDetails, setRequestDetails] = useState<RequestOverview>();

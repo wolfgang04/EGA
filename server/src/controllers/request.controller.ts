@@ -12,6 +12,7 @@ import {
   Tool,
 } from "../models/sequelize";
 import Category from "../models/sequelize/category";
+import { Op } from "sequelize";
 
 export const requestTools = async (
   req: Request<{}, {}, CreateRequestToolBody>,
@@ -187,6 +188,42 @@ export const requestOverview = async (
     if (error instanceof Error) {
       console.error("Error fetching request details:", error);
       return res.status(500).json({ msg: "Error fetching request details" });
+    } else {
+      console.error("Unknown error occured:", error);
+      return res.status(500).json({ msg: "Unknown error occured" });
+    }
+  }
+};
+
+export const getUserOngoingRequest = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const user = Number(req.session.userID);
+
+  try {
+    const userLatest = await RequestHistory.findAll({
+      attributes: [
+        "id",
+        "status",
+        "changed_at",
+        [sequelize.fn("MIN", sequelize.col("changed_at")), "lastChangedAt"],
+      ],
+      where: {
+        id: user,
+        status: { [Op.not]: "returned" },
+      },
+      group: ["id"],
+      order: [["changed_at", "DESC"]],
+    });
+
+    return res.status(200).json(userLatest);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching user latest request:", error);
+      return res
+        .status(500)
+        .json({ msg: "Error fetching user latest request" });
     } else {
       console.error("Unknown error occured:", error);
       return res.status(500).json({ msg: "Unknown error occured" });

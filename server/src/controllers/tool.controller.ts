@@ -53,3 +53,23 @@ export const getCategoryTools = async (
     }
   }
 };
+
+export const getTools = async (_req: Request, res: Response): Promise<any> => {
+  try {
+    const tools = await Tool.findAll({
+      attributes: ["name", "id"],
+    });
+
+    return res.status(200).json(tools);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error occured while fetching tools:", error);
+      return res
+        .status(500)
+        .json({ msg: "Error occured while fetching tools" });
+    } else {
+      console.error("Unknown error occured:", error);
+      return res.status(500).json({ msg: "Unknown error occured" });
+    }
+  }
+};
