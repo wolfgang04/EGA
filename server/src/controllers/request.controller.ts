@@ -111,17 +111,17 @@ export const changeRequestStatus = async (
   req: Request<{}, {}, ChangeRequestStatus>,
   res: Response
 ): Promise<any> => {
-  const { requestHistoryID, status } = req.body;
+  const { requestID, status } = req.body;
 
   try {
-    const requestHistory = await RequestHistory.findByPk(requestHistoryID);
-    if (!requestHistory)
+    const reqq = await request.findByPk(requestID);
+    if (!reqq)
       return res.status(400).json({ msg: "Request history not found" });
 
     await RequestHistory.create({
       status,
       changedBy: req.session.userID!,
-      requestID: requestHistory.requestID,
+      requestID: reqq.id,
     });
 
     return res.status(200).json({ msg: "Request status successfully changed" });
@@ -148,7 +148,7 @@ export const requestOverview = async (
   try {
     const requestDetails = await request.findOne({
       where: { id: Number(requestID) },
-      attributes: ["request_by"],
+      attributes: ["request_by", "id"],
       include: [
         {
           model: RequestTool,
@@ -180,6 +180,8 @@ export const requestOverview = async (
               attributes: ["name"],
             },
           ],
+          order: [["changedAt", "DESC"]],
+          separate: true,
         },
         {
           model: Profile,
@@ -208,28 +210,73 @@ export const getUserOngoingRequest = async (
   const user = Number(req.session.userID);
 
   try {
-    const userLatest = await RequestHistory.findAll({
-      attributes: [
-        "id",
-        "status",
-        "changed_at",
-        [sequelize.fn("MIN", sequelize.col("changed_at")), "lastChangedAt"],
-      ],
+    const userChanges = await RequestHistory.findAll({
+      attributes: ["requestID", "status", "changed_at"],
       where: {
-        id: user,
+        changedBy: user,
         status: { [Op.not]: "returned" },
+        changedAt: {
+          [Op.eq]: sequelize.literal(`(
+            SELECT MAX(changed_at)
+            FROM request_status_history AS sub
+            WHERE sub.request_ID = request.id
+          )`),
+        },
       },
-      group: ["id"],
       order: [["changed_at", "DESC"]],
+      include: [
+        {
+          model: request,
+          as: "request",
+          attributes: ["id"],
+        },
+      ],
     });
 
-    return res.status(200).json(userLatest);
+    return res.status(200).json(userChanges);
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error fetching user latest request:", error);
       return res
         .status(500)
         .json({ msg: "Error fetching user latest request" });
+    } else {
+      console.error("Unknown error occured:", error);
+      return res.status(500).json({ msg: "Unknown error occured" });
+    }
+  }
+};
+
+export const prevRequests = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const user = Number(req.session.userID);
+
+  try {
+    const userChanges = await RequestHistory.findAll({
+      attributes: ["requestID", "status", "changed_at"],
+      where: {
+        status: { [Op.in]: ["returned", "denied"] },
+      },
+      order: [["changed_at", "DESC"]],
+      include: [
+        {
+          model: request,
+          as: "request",
+          attributes: ["id"],
+          where: {
+            requestBy: user,
+          },
+        },
+      ],
+    });
+
+    return res.status(200).json(userChanges);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching previous requests:", error);
+      return res.status(500).json({ msg: "Error fetching previous requests" });
     } else {
       console.error("Unknown error occured:", error);
       return res.status(500).json({ msg: "Unknown error occured" });

@@ -24,3 +24,7 @@ tbody > tr {
 td {
   @apply hover:bg-black/10
 }
+
+button:disabled {
+  @apply cursor-not-allowed
+}

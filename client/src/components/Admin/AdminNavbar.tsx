@@ -12,6 +12,7 @@ const AdminNavbar = () => {
         withCredentials: true,
       });
 
+      localStorage.clear();
       if (status === 200) navigate("/login");
     } catch (error) {
       console.log(error);

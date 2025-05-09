@@ -5,6 +5,7 @@ import Request from "./request";
 
 enum Status {
   pending = "pending",
+  denied = "denied",
   approved = "approved",
   borrowed = "borrowed",
   returned = "returned",
@@ -36,7 +37,13 @@ const RequestHistory = sequelize.define<RequestHistoryInstance>(
       autoIncrement: true,
     },
     status: {
-      type: DataTypes.ENUM("pending", "approved", "borrowed", "returned"),
+      type: DataTypes.ENUM(
+        "pending",
+        "denied",
+        "approved",
+        "borrowed",
+        "returned"
+      ),
       defaultValue: "pending",
     },
     changedBy: {

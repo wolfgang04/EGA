@@ -14,6 +14,7 @@ const IsAuth = () => {
         });
 
         if (res.status === 200) {
+          localStorage.setItem("role", res.data.accType);
           if (res.data.accType === "admin") navigate("/admin/history");
           else navigate("/user/requests");
         } else if (res.status === 401) {

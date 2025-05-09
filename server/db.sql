@@ -1,6 +1,12 @@
 CREATE DATABASE ega;
 CREATE TYPE USER_TYPE AS ENUM ('admin', 'employee');
-CREATE TYPE STATUS AS ENUM ('pending', 'approved', 'borrowed', 'returned');
+CREATE TYPE STATUS AS ENUM (
+  'pending',
+  'denied',
+  'approved',
+  'borrowed',
+  'returned'
+);
 ----
 CREATE TABLE user_auth (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,

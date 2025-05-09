@@ -28,12 +28,18 @@ interface RequestTool {
 
 enum Status {
   pending = "pending",
+  denied = "denied",
   approved = "approved",
   borrowed = "borrowed",
   returned = "returned",
 }
 
 export interface ChangeRequestStatus {
-  requestHistoryID: number;
+  requestID: number;
   status: Status;
 }
+
+export type LatestChange = {
+  requestID: number;
+  lastChangedAt: string;
+};

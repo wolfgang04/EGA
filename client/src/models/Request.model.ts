@@ -37,3 +37,9 @@ export interface StatusDetails {
     };
   };
 }
+
+export interface CurrReq {
+  changed_at: string;
+  status: string;
+  request: { id: string };
+}

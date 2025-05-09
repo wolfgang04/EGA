@@ -3,6 +3,7 @@ import {
   changeRequestStatus,
   getRequestUpdates,
   getUserOngoingRequest,
+  prevRequests,
   requestOverview,
   requestTools,
 } from "../controllers/request.controller";
@@ -14,5 +15,6 @@ router.get("/requests", getRequestUpdates);
 router.post("/status", changeRequestStatus);
 router.get("/overview", requestOverview);
 router.get("/ongoing", getUserOngoingRequest);
+router.get("/previous", prevRequests);
 
 export default router;
