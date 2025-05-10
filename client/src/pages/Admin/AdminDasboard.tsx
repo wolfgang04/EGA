@@ -1,21 +1,29 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import SERVER from "../../SERVER";
 import { Histories } from "../../models/History.model";
 import HistoryTableRow from "../../components/Admin/Requests/HistoryTableRow";
+import PageNav from "../../components/Admin/Requests/PageNav";
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [histories, setHistories] = useState<Histories>([]);
+  const [numOfPages, setNumOfPages] = useState(1);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get(`${SERVER}/request/requests`, {
-          withCredentials: true,
-        });
+        const res = await axios.get<{ numOfPages: number; rows: Histories }>(
+          `${SERVER}/request/requests`,
+          {
+            withCredentials: true,
+            params: { page },
+          },
+        );
 
-        setHistories(res.data);
+        setHistories(res.data.rows);
+        setNumOfPages(res.data.numOfPages);
       } catch (error) {
         console.log(error);
       } finally {
@@ -24,7 +32,7 @@ const AdminDashboard = () => {
     };
 
     fetchHistory();
-  }, []);
+  }, [page]);
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -51,10 +59,7 @@ const AdminDashboard = () => {
         </tbody>
       </table>
 
-      <div className="flex w-fit grow-0 gap-2">
-        <button>prev</button>
-        <button>next</button>
-      </div>
+      <PageNav numOfPages={numOfPages} setPage={setPage} currPage={page} />
     </div>
   );
 };

@@ -66,10 +66,11 @@ export const getRequestUpdates = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1 } = req.query;
+  const limit = 10;
 
   try {
-    const requests = await RequestHistory.findAll({
+    const requests = await RequestHistory.findAndCountAll({
       limit: Number(limit),
       offset: (Number(page) - 1) * Number(limit),
       attributes: ["request_id", "status", "changed_by", "changed_at"],
@@ -95,7 +96,8 @@ export const getRequestUpdates = async (
       ],
     });
 
-    return res.status(200).json(requests);
+    const numOfPages = requests.count / 10 + 1;
+    return res.status(200).json({ numOfPages, rows: requests.rows });
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error fetching requests:", error);

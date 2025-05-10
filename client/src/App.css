@@ -2,7 +2,7 @@
 
 
 table {
-  @apply my-5
+  @apply my-5 min-h-[350px] min-w-[650px]
 }
 
 button {
