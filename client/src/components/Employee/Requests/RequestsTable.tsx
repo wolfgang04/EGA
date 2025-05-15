@@ -1,31 +1,55 @@
 import React from "react";
-import { CurrReq } from "../../../models/Request.model";
-import CurrRequestsTableRow from "./RequestsTableRow";
+import { CurrReq as currentRequestsData } from "../../../models/Request.model";
+import { Table, TableProps } from "antd";
 
-const RequestsTable: React.FC<{ requests: CurrReq[] }> = ({ requests }) => {
-  return (
-    <>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Status</th>
-            <th>Changed at</th>
-          </tr>
-        </thead>
+export interface CurrReq {
+  changed_at: Date;
+  status: string;
+  request_id: string;
+}
 
-        <tbody>
-          {requests.map((request) => (
-            <CurrRequestsTableRow
-              request={request}
-              key={request.request_id + request.changed_at}
-            />
-          ))}
-        </tbody>
-      </table>
-      {requests.length < 1 && <p>No requests</p>}
-    </>
-  );
-};
+const tableColumns: TableProps<currentRequestsData>["columns"] = [
+  {
+    title: "Request ID",
+    dataIndex: "request_id",
+    key: "request id",
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+  },
+  {
+    title: "Changed at",
+    dataIndex: "changed_at",
+    render: (date: string) =>
+      new Date(date).toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      }),
+    key: "changed at",
+  },
+];
+
+const RequestsTable: React.FC<{
+  requests: currentRequestsData[];
+  setPage: (page: number) => void;
+}> = ({ requests, setPage }) => (
+  <Table<currentRequestsData>
+    columns={tableColumns}
+    dataSource={requests.map((request) => ({
+      ...request,
+      key: request.changed_at,
+    }))}
+    pagination={{
+      pageSize: 10,
+      onChange: (page) => setPage(page),
+      showQuickJumper: true,
+    }}
+  />
+);
 
 export default RequestsTable;

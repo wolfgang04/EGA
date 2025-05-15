@@ -1,27 +1,41 @@
 import React from "react";
-import { StatusDetails } from "../../../models/Request.model";
-import StatusTableRow from "./StatusTableRow";
+import type { StatusDetails as StatusData } from "../../models/Request.model";
+import { Table, TableProps } from "antd";
 
-const StatusTable: React.FC<{ statusChanges: StatusDetails[] }> = ({
-  statusChanges,
-}) => {
-  return (
-    <table>
-      <thead>
-        <tr>
-          <th>Changed by</th>
-          <th>Status</th>
-          <th>Changed at</th>
-        </tr>
-      </thead>
+const tableColumns: TableProps<StatusData>["columns"] = [
+  {
+    title: "Changed by",
+    dataIndex: "changedByProfile",
+    render: ({ name }) => `${name.last}, ${name.first} ${name.middle}`,
+    key: "changedByProfile",
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+  },
+  {
+    title: "Changed at",
+    dataIndex: "changedAt",
+    render: (date: string) =>
+      new Date(date).toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+      }),
+    key: "changed at",
+  },
+];
 
-      <tbody>
-        {statusChanges.map((statusChange, idx) => (
-          <StatusTableRow changes={statusChange} key={idx} />
-        ))}
-      </tbody>
-    </table>
-  );
-};
+const StatusTable: React.FC<{ statuses: StatusData[] }> = ({ statuses }) => (
+  <Table<StatusData>
+    columns={tableColumns}
+    dataSource={statuses.map((request) => ({
+      ...request,
+      key: request.status,
+    }))}
+  />
+);
 
 export default StatusTable;

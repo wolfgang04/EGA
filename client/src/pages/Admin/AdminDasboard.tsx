@@ -2,28 +2,32 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import SERVER from "../../SERVER";
 import { Histories } from "../../models/History.model";
-import HistoryTableRow from "../../components/Admin/Requests/HistoryTableRow";
-import PageNav from "../../components/Admin/Requests/PageNav";
+import { Button } from "antd";
+import FilterModal from "../../components/Admin/Requests/FilterModal";
+import HistoryTable from "../../components/Admin/Requests/HistoryTable";
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [histories, setHistories] = useState<Histories>([]);
-  const [numOfPages, setNumOfPages] = useState(1);
   const [page, setPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [searchFilter, setSearchFilter] = useState("");
+  const [addFilter, setAddFilter] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get<{ numOfPages: number; rows: Histories }>(
+        const res = await axios.get<{ count: number; rows: Histories }>(
           `${SERVER}/request/requests`,
           {
             withCredentials: true,
-            params: { page },
+            params: { page, filter: searchFilter },
           },
         );
 
         setHistories(res.data.rows);
-        setNumOfPages(res.data.numOfPages);
+        setTotalItems(res.data.count);
       } catch (error) {
         console.log(error);
       } finally {
@@ -32,34 +36,55 @@ const AdminDashboard = () => {
     };
 
     fetchHistory();
-  }, [page]);
+  }, [page, addFilter]);
+
+  const handleChangeFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchFilter(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setAddFilter((prevFilter) => !prevFilter);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <table className="history">
-        <thead>
-          <tr>
-            <th>Request ID</th>
-            <th>Requested by</th>
-            <th>Status</th>
-            <th>Changed by</th>
-            <th>Date</th>
-          </tr>
-        </thead>
+      <div className="">
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Search"
+            className="w-fit"
+            value={searchFilter}
+            onChange={handleChangeFilter}
+          />
+        </form>
 
-        <tbody>
-          {isLoading && (
-            <tr>
-              <td>Loading...</td>
-            </tr>
-          )}
-          {histories.map((history) => (
-            <HistoryTableRow history={history} key={history.changed_at} />
-          ))}
-        </tbody>
-      </table>
+        <Button type="primary" onClick={() => setIsModalOpen(true)}>
+          Filter
+        </Button>
+        <FilterModal
+          handleCancel={handleCancel}
+          handleOk={handleCancel}
+          isModalOpen={isModalOpen}
+        />
+      </div>
 
-      <PageNav numOfPages={numOfPages} setPage={setPage} currPage={page} />
+      <HistoryTable
+        history={histories}
+        currPage={page}
+        totalItems={totalItems}
+        setCurrentPage={setPage}
+      />
     </div>
   );
 };

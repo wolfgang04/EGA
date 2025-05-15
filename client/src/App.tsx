@@ -1,18 +1,20 @@
 import "./App.css";
 import { Route, Routes, useNavigate } from "react-router";
 import Login from "./pages/Login";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import axios from "axios";
-import AdminDashboard from "./pages/Admin/AdminDasboard";
-import IsAuth from "./components/IsAuth";
-import RequestOverview from "./pages/RequestOverview";
-import Categories from "./pages/Admin/Categories";
-import Tool from "./pages/Admin/Tool";
-import Users from "./pages/Admin/Users";
-import AdminNavbar from "./components/Admin/AdminNavbar";
-import Navbar from "./components/Employee/Navbar";
-import Requests from "./pages/Employee/Requests";
-import Tools from "./pages/Employee/Tools";
+import { Spin } from "antd";
+
+const AdminDashboard = lazy(() => import("./pages/Admin/AdminDasboard"));
+const IsAuth = lazy(() => import("./components/IsAuth"));
+const RequestOverview = lazy(() => import("./pages/RequestOverview"));
+const Categories = lazy(() => import("./pages/Admin/Categories"));
+const Tool = lazy(() => import("./pages/Admin/Tool"));
+const Users = lazy(() => import("./pages/Admin/Users"));
+const AdminNavbar = lazy(() => import("./components/Admin/AdminNavbar"));
+const Navbar = lazy(() => import("./components/Employee/Navbar"));
+const Requests = lazy(() => import("./pages/Employee/Requests"));
+const Tools = lazy(() => import("./pages/Employee/Tools"));
 
 export default function App() {
   const navigate = useNavigate();
@@ -35,26 +37,28 @@ export default function App() {
   }, [navigate]);
 
   return (
-    <Routes>
-      <Route path="/" element={<IsAuth />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="request/:requestID" element={<RequestOverview />} />
-      {/* ADMIN CONTENTS */}
-      {role === "admin" ? (
-        <Route path="/admin" element={<AdminNavbar />}>
-          <Route path="history" element={<AdminDashboard />} />
-          <Route path="tools" element={<Categories />} />
-          <Route path="tools/:tool" element={<Tool />} />
-          <Route path="users" element={<Users />} />
-          {/* <Route path="/users/:user" element={<Tool />} /> */}
-        </Route>
-      ) : (
-        <Route path="/user" element={<Navbar />}>
-          {/* EMPLOYEE CONTENTS */}
-          <Route path="requests" element={<Requests />} />
-          <Route path="tools" element={<Tools />} />
-        </Route>
-      )}
-    </Routes>
+    <Suspense fallback={<Spin />}>
+      <Routes>
+        <Route path="/" element={<IsAuth />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="request/:requestID" element={<RequestOverview />} />
+        {/* ADMIN CONTENTS */}
+        {role === "admin" ? (
+          <Route path="/admin" element={<AdminNavbar />}>
+            <Route path="history" element={<AdminDashboard />} />
+            <Route path="tools" element={<Categories />} />
+            <Route path="tools/:tool" element={<Tool />} />
+            <Route path="users" element={<Users />} />
+            {/* <Route path="/users/:user" element={<Tool />} /> */}
+          </Route>
+        ) : (
+          <Route path="/user" element={<Navbar />}>
+            {/* EMPLOYEE CONTENTS */}
+            <Route path="requests" element={<Requests />} />
+            <Route path="tools" element={<Tools />} />
+          </Route>
+        )}
+      </Routes>
+    </Suspense>
   );
 }

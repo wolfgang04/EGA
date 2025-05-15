@@ -66,7 +66,7 @@ export const getRequestUpdates = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const { page = 1 } = req.query;
+  const { page = 1, filter = "" } = req.query;
   const limit = 10;
 
   try {
@@ -96,8 +96,7 @@ export const getRequestUpdates = async (
       ],
     });
 
-    const numOfPages = requests.count / 10 + 1;
-    return res.status(200).json({ numOfPages, rows: requests.rows });
+    return res.status(200).json({ count: requests.count, rows: requests.rows });
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error fetching requests:", error);
@@ -255,7 +254,7 @@ export const prevRequests = async (
   const user = Number(req.session.userID);
 
   try {
-    const userChanges = await RequestHistory.findAll({
+    const userChanges = await RequestHistory.findAndCountAll({
       attributes: ["requestID", "status", "changedAt"],
       where: {
         status: { [Op.in]: ["returned", "denied"] },
@@ -273,7 +272,7 @@ export const prevRequests = async (
       ],
     });
 
-    const userPrev = userChanges.map((item) => ({
+    const userPrev = userChanges.rows.map((item) => ({
       changed_at: item.changedAt,
       status: item.status,
       request_id: item.requestID,

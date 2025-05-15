@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import SERVER from "../SERVER";
 import type { RequestOverview, RequestStatus } from "../models/Request.model";
-import ToolTable from "../components/RequestOverview/ToolTable";
+import RequestToolTable from "../components/RequestOverview/RequestToolTable";
 import StatusTable from "../components/RequestOverview/StatusTable";
 
 const RequestOverview = () => {
@@ -123,8 +123,8 @@ const RequestOverview = () => {
         )}
       </div>
 
-      <ToolTable requests={requestDetails?.requestFiled || []} />
-      <StatusTable statusChanges={requestDetails?.statuses || []} />
+      <RequestToolTable requests={requestDetails!.requestFiled} />
+      <StatusTable statuses={requestDetails!.statuses} />
     </div>
   );
 };
