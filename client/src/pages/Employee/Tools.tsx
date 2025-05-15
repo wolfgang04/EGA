@@ -63,7 +63,7 @@ const Tools = () => {
         { withCredentials: true },
       );
 
-      console.log(res);
+      console.log(cartWithoutName, res);
     } catch (error) {
       console.log(error);
     }

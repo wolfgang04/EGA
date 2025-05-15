@@ -36,7 +36,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <table>
+      <table className="history">
         <thead>
           <tr>
             <th>Request ID</th>

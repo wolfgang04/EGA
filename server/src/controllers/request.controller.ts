@@ -12,7 +12,7 @@ import {
   Tool,
 } from "../models/sequelize";
 import Category from "../models/sequelize/category";
-import { Op } from "sequelize";
+import { literal, Op, QueryTypes } from "sequelize";
 
 export const requestTools = async (
   req: Request<{}, {}, CreateRequestToolBody>,
@@ -212,30 +212,29 @@ export const getUserOngoingRequest = async (
   const user = Number(req.session.userID);
 
   try {
-    const userChanges = await RequestHistory.findAll({
-      attributes: ["requestID", "status", "changed_at"],
-      where: {
-        changedBy: user,
-        status: { [Op.not]: "returned" },
-        changedAt: {
-          [Op.eq]: sequelize.literal(`(
-            SELECT MAX(changed_at)
-            FROM request_status_history AS sub
-            WHERE sub.request_ID = request.id
-          )`),
-        },
-      },
-      order: [["changed_at", "DESC"]],
-      include: [
-        {
-          model: request,
-          as: "request",
-          attributes: ["id"],
-        },
-      ],
-    });
+    const results = await sequelize.query(
+      `
+      SELECT h.request_id, h.status, h.changed_at
+        FROM request_status_history h
+      INNER JOIN (
+        SELECT request_id, MAX(changed_at) AS latest_change
+        FROM request_status_history
+        GROUP BY request_id
+      ) AS latest
+        ON h.request_id = latest.request_id AND h.changed_at = latest.latest_change
+      INNER JOIN request r
+        ON h.request_id = r.id
+      WHERE h.status NOT IN ('returned', 'denied')
+        AND r.request_by = :user
+      ORDER BY h.changed_at DESC;
+    `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { user },
+      }
+    );
 
-    return res.status(200).json(userChanges);
+    return res.status(200).json(results);
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error fetching user latest request:", error);
@@ -257,7 +256,7 @@ export const prevRequests = async (
 
   try {
     const userChanges = await RequestHistory.findAll({
-      attributes: ["requestID", "status", "changed_at"],
+      attributes: ["requestID", "status", "changedAt"],
       where: {
         status: { [Op.in]: ["returned", "denied"] },
       },
@@ -274,7 +273,13 @@ export const prevRequests = async (
       ],
     });
 
-    return res.status(200).json(userChanges);
+    const userPrev = userChanges.map((item) => ({
+      changed_at: item.changedAt,
+      status: item.status,
+      request_id: item.requestID,
+    }));
+
+    return res.status(200).json(userPrev);
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error fetching previous requests:", error);

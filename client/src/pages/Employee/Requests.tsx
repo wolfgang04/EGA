@@ -33,14 +33,14 @@ const Requests = () => {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center text-center">
-      <div className="flex flex-col items-center justify-center">
-        <p>Current Requests</p>
+    <div className="flex justify-center text-center">
+      <div className="flex flex-col">
+        <h2>Current Requests</h2>
         <RequestsTable requests={currRequests} />
       </div>
 
-      <div className="flex flex-col items-center justify-center">
-        <p>Previous Requests</p>
+      <div className="flex flex-col">
+        <h2>Previous Requests</h2>
         <RequestsTable requests={prevRequests} />
       </div>
     </div>

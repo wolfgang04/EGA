@@ -2,7 +2,7 @@
 
 
 table {
-  @apply my-5 min-h-[350px] min-w-[650px]
+  @apply my-5 min-w-1/2
 }
 
 button {
@@ -13,18 +13,18 @@ input {
   @apply outline-none
 }
 
-table {
-  @apply min-w-1/2
-}
-
 tbody > tr {
   @apply hover:bg-black/5 text-center
 }
 
 td {
-  @apply hover:bg-black/10
+  @apply hover:bg-black/10 w-52
 }
 
 button:disabled {
   @apply cursor-not-allowed
+}
+
+.history {
+  @apply min-h-[350px] min-w-[650px]
 }

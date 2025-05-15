@@ -2,26 +2,27 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import SERVER from "../SERVER";
-import type { RequestOverview } from "../models/Request.model";
+import type { RequestOverview, RequestStatus } from "../models/Request.model";
 import ToolTable from "../components/RequestOverview/ToolTable";
 import StatusTable from "../components/RequestOverview/StatusTable";
 
 const RequestOverview = () => {
   const [requestDetails, setRequestDetails] = useState<RequestOverview>();
-  const [selected, setSelected] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [statusChanged, setStatusChanged] = useState(false);
-  const location = useLocation();
-  const requestID = location.pathname.slice(-1);
+
   const role = localStorage.getItem("role") as "admin" | "employee";
-  const disableBtn =
-    ["returned", "denied", "pending", ""].includes(selected) &&
-    (role === "admin" || (role === "employee" && selected !== "returned"));
   const roleOptions = {
     admin: ["pending", "denied", "approved"],
-    employee: ["borrowed", "returned"],
+    employee: ["approved", "borrowed", "returned"],
   } as const;
+  const [initialStatus, setInitialStatus] = useState<RequestStatus>("pending");
+  const [currStatus, setCurrStatus] = useState<RequestStatus>("pending");
+  const [nextStatuses, setNextStatuses] = useState<RequestStatus[]>([]);
+
+  const location = useLocation();
+  const requestID = location.pathname.slice(12);
 
   useEffect(() => {
     const fetchRequestOverview = async () => {
@@ -32,7 +33,8 @@ const RequestOverview = () => {
         });
 
         setRequestDetails(data);
-        setSelected(data.statuses[0].status);
+        setCurrStatus(data.statuses[0].status);
+        setInitialStatus(data.statuses[0].status);
       } catch (error) {
         console.log(error);
       } finally {
@@ -43,17 +45,31 @@ const RequestOverview = () => {
     fetchRequestOverview();
   }, [statusChanged]);
 
+  // decides which option is displayed depending on the user's role and the current status
+  const disableBtn =
+    (["returned", "denied", "approved", "borrowed"].includes(currStatus) &&
+      role === "admin") ||
+    (["pending", "returned"].includes(currStatus) && role === "employee");
+
+  useEffect(() => {
+    const currStatusIdx = roleOptions[role].findIndex(
+      (status) => status === currStatus,
+    );
+    const nextOptions =
+      role === "admin" ? currStatusIdx + 3 : currStatusIdx + 2;
+    const nextStatus = roleOptions[role].slice(currStatusIdx, nextOptions);
+    setNextStatuses(nextStatus);
+  }, [currStatus]);
+
   const handleChangeStatus = async () => {
     try {
-      const res = await axios.post(
+      await axios.post(
         `${SERVER}/request/status`,
-        { status: selected, requestID: requestDetails?.id },
+        { status: currStatus, requestID: requestDetails?.id },
         {
           withCredentials: true,
         },
       );
-
-      console.log(res);
 
       setIsVisible(false);
       setStatusChanged((prev) => !prev);
@@ -82,22 +98,27 @@ const RequestOverview = () => {
               <select
                 id="status-select"
                 name="status"
-                value={selected}
-                onChange={(e) => setSelected(e.target.value)}
+                value={currStatus}
+                onChange={(e) => setCurrStatus(e.target.value as RequestStatus)}
                 className=""
               >
-                {roleOptions[role].map((option) => (
+                {nextStatuses.map((nextStatus) => (
                   <option
-                    key={option}
-                    value={option}
-                    disabled={option === selected}
+                    key={nextStatus}
+                    value={nextStatus}
+                    disabled={nextStatus === currStatus}
                   >
-                    {option}
+                    {nextStatus}
                   </option>
                 ))}
               </select>
             </div>
-            <button onClick={handleChangeStatus}>change</button>
+            <button
+              onClick={handleChangeStatus}
+              disabled={currStatus === initialStatus}
+            >
+              change
+            </button>
           </>
         )}
       </div>

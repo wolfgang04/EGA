@@ -13,8 +13,8 @@ const CurrRequestsTableRow: React.FC<{ request: CurrReq }> = ({ request }) => {
   });
 
   return (
-    <tr onClick={() => navigate(`/request/rq-${request.request.id}`)}>
-      <td>rq-{request.request.id}</td>
+    <tr onClick={() => navigate(`/request/rq-${request.request_id}`)}>
+      <td>rq-{request.request_id}</td>
       <td>{request.status}</td>
       <td>{formattedDate}</td>
     </tr>

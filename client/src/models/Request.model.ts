@@ -1,4 +1,9 @@
-type RequestStatus = "pending" | "approved" | "borrowed" | "returned";
+export type RequestStatus =
+  | "pending"
+  | "approved"
+  | "borrowed"
+  | "returned"
+  | "denied";
 
 export interface RequestOverview {
   id: string; // The request ID
@@ -39,7 +44,7 @@ export interface StatusDetails {
 }
 
 export interface CurrReq {
-  changed_at: string;
+  changed_at: Date;
   status: string;
-  request: { id: string };
+  request_id: string;
 }

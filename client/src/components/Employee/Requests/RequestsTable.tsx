@@ -18,7 +18,7 @@ const RequestsTable: React.FC<{ requests: CurrReq[] }> = ({ requests }) => {
           {requests.map((request) => (
             <CurrRequestsTableRow
               request={request}
-              key={request.request + request.changed_at}
+              key={request.request_id + request.changed_at}
             />
           ))}
         </tbody>
