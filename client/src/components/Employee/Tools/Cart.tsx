@@ -1,3 +1,4 @@
+import { Button, Col, Input, Modal, Row } from "antd";
 import React from "react";
 
 interface Props {
@@ -5,6 +6,7 @@ interface Props {
   onClose: () => void;
   onChangeAmount: (id: string, newQuantity: number) => void;
   onSubmit: (e: React.FormEvent) => void;
+  open: boolean;
 }
 
 interface Cart {
@@ -14,41 +16,38 @@ interface Cart {
   name: string;
 }
 
-const Cart: React.FC<Props> = ({ cart, onClose, onChangeAmount, onSubmit }) => {
+const Cart: React.FC<Props> = ({
+  cart,
+  onClose,
+  open,
+  onChangeAmount,
+  onSubmit,
+}) => {
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-1/2">
-      <form onSubmit={onSubmit}>
-        <table>
-          <thead>
-            <tr>
-              <th>tool name</th>
-              <th>amount to borrow</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {cart.map((cartItem, idx) => (
-              <tr className="" key={cartItem.name + cartItem.id + idx}>
-                <td>{cartItem.name}</td>
-                <td>
-                  <input
-                    type="number"
-                    min={1}
-                    value={cartItem.quantity}
-                    onChange={(e) =>
-                      onChangeAmount(cartItem.id, Number(e.target.value))
-                    }
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <button type="submit">add</button>
-      </form>
-
-      <button onClick={onClose}>close</button>
-    </div>
+    <>
+      <Modal
+        title="Tools to borrow"
+        open={open}
+        onOk={onSubmit}
+        onCancel={onClose}
+      >
+        {cart.map((item) => (
+          <Row key={item.id}>
+            <Col span={8}>{item.name}</Col>
+            <Col span={8} offset={4}>
+              <Input
+                type="number"
+                value={item.quantity}
+                onChange={(e) =>
+                  onChangeAmount(item.id, Number(e.target.value))
+                }
+                min={1}
+              />
+            </Col>
+          </Row>
+        ))}
+      </Modal>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { CreateToolRequestBody } from "../models/Request.model";
-import { Tool } from "../models/sequelize";
+import { sequelize, Tool } from "../models/sequelize";
+import { QueryTypes } from "sequelize";
 
 export const createTool = async (
   req: Request<{}, {}, CreateToolRequestBody>,
@@ -56,9 +57,36 @@ export const getCategoryTools = async (
 
 export const getTools = async (_req: Request, res: Response): Promise<any> => {
   try {
-    const tools = await Tool.findAll({
-      attributes: ["name", "id"],
-    });
+    const tools = await sequelize.query(
+      `
+      SELECT 
+        t.id,
+        t.name,
+        t.quantity AS total_quantity,
+        t.category_id,
+        t.location,
+        c.name AS category_name,
+        COALESCE(t.quantity - SUM(CASE 
+          WHEN 
+            latest_status.status IN ('approved', 'borrowed') 
+          THEN rt.quantity 
+          ELSE 
+            0 
+          END
+        ), t.quantity) AS available_quantity
+      FROM tool t
+      LEFT JOIN request_tool rt ON rt.tool_id = t.id
+      LEFT JOIN (
+        SELECT DISTINCT ON (request_id)
+          request_id, status
+        FROM request_status_history
+        ORDER BY request_id, changed_at DESC
+      ) latest_status ON latest_status.request_id = rt.request_id
+      LEFT JOIN category c ON c.id = t.category_id
+      GROUP BY t.id, t.name, t.quantity, t.location, t.category_id, c.name;
+    `,
+      { type: QueryTypes.SELECT }
+    );
 
     return res.status(200).json(tools);
   } catch (error) {

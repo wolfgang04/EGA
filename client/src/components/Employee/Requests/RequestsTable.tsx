@@ -1,6 +1,7 @@
 import React from "react";
 import { CurrReq as currentRequestsData } from "../../../models/Request.model";
 import { Table, TableProps } from "antd";
+import { useNavigate } from "react-router";
 
 export interface CurrReq {
   changed_at: Date;
@@ -37,19 +38,30 @@ const tableColumns: TableProps<currentRequestsData>["columns"] = [
 const RequestsTable: React.FC<{
   requests: currentRequestsData[];
   setPage: (page: number) => void;
-}> = ({ requests, setPage }) => (
-  <Table<currentRequestsData>
-    columns={tableColumns}
-    dataSource={requests.map((request) => ({
-      ...request,
-      key: request.changed_at,
-    }))}
-    pagination={{
-      pageSize: 10,
-      onChange: (page) => setPage(page),
-      showQuickJumper: true,
-    }}
-  />
-);
+}> = ({ requests, setPage }) => {
+  const navigate = useNavigate();
+
+  return (
+    <Table<currentRequestsData>
+      columns={tableColumns}
+      dataSource={requests.map((request) => ({
+        ...request,
+        key: request.changed_at,
+      }))}
+      pagination={{
+        pageSize: 10,
+        onChange: (page) => setPage(page),
+        showQuickJumper: true,
+      }}
+      onRow={(record) => {
+        return {
+          onClick: () => {
+            navigate("/request/rq-" + record.request_id);
+          },
+        };
+      }}
+    />
+  );
+};
 
 export default RequestsTable;

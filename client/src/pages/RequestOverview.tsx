@@ -5,6 +5,7 @@ import SERVER from "../SERVER";
 import type { RequestOverview, RequestStatus } from "../models/Request.model";
 import RequestToolTable from "../components/RequestOverview/RequestToolTable";
 import StatusTable from "../components/RequestOverview/StatusTable";
+import { Button } from "antd";
 
 const RequestOverview = () => {
   const [requestDetails, setRequestDetails] = useState<RequestOverview>();
@@ -88,10 +89,12 @@ const RequestOverview = () => {
         {`${requestDetails?.requestByProfile?.name.last}, ${requestDetails?.requestByProfile?.name.first} ${requestDetails?.requestByProfile?.name.middle}`}
       </p>
 
+      <RequestToolTable requests={requestDetails!.requestFiled} />
+
       <div className="mt-4 flex gap-1">
-        <button onClick={() => setIsVisible(!isVisible)} disabled={disableBtn}>
+        <Button onClick={() => setIsVisible(!isVisible)} disabled={disableBtn}>
           change status
-        </button>
+        </Button>
         {isVisible && (
           <>
             <div className="flex flex-col items-start">
@@ -113,17 +116,18 @@ const RequestOverview = () => {
                 ))}
               </select>
             </div>
-            <button
+            <Button
+              color="default"
+              variant="solid"
               onClick={handleChangeStatus}
               disabled={currStatus === initialStatus}
             >
               change
-            </button>
+            </Button>
           </>
         )}
       </div>
 
-      <RequestToolTable requests={requestDetails!.requestFiled} />
       <StatusTable statuses={requestDetails!.statuses} />
     </div>
   );
