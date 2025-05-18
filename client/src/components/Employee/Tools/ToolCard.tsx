@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, Space, Button, Flex } from "antd";
+import { EnvironmentOutlined } from "@ant-design/icons";
 
 interface Tool {
   name: string;
@@ -15,6 +16,7 @@ interface CART {
   note: string;
   id: string;
   name: string;
+  max: number;
 }
 
 interface Props {
@@ -40,6 +42,7 @@ const ToolCard: React.FC<Props> = ({ tool, isLoading, onAdd }) => {
               note: "",
               id: tool.id,
               name: tool.name,
+              max: tool.available_quantity,
             })
           }
         >
@@ -49,10 +52,14 @@ const ToolCard: React.FC<Props> = ({ tool, isLoading, onAdd }) => {
       size="small"
     >
       <Space direction="vertical" style={{ width: "100%" }}>
-        <Space direction="vertical">
+        <div className="">
           <h3>{tool.name}</h3>
           <h4>{tool.category_name}</h4>
-        </Space>
+          <Space>
+            <EnvironmentOutlined />
+            <p>{tool.location}</p>
+          </Space>
+        </div>
         <Flex justify="space-between" gap="small">
           <Space
             direction="vertical"

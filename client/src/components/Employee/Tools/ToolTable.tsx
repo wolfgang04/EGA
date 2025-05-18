@@ -15,7 +15,9 @@ const ToolTable: React.FC<{
   tools: ToolData[];
   loading: boolean;
   onAdd: (tool: Cart) => void;
-}> = ({ tools, loading, onAdd }) => {
+  onNavigate: (page: string) => void;
+  page: number;
+}> = ({ tools, loading, onAdd, onNavigate, page }) => {
   const tableColumns: TableProps<ToolData>["columns"] = [
     { title: "Tool Name", dataIndex: "name", key: "name" },
     {
@@ -23,6 +25,7 @@ const ToolTable: React.FC<{
       dataIndex: "category_name",
       key: "categoryName",
     },
+    { title: "Location", dataIndex: "location", key: "location" },
     {
       title: "Total",
       dataIndex: "total_quantity",
@@ -46,6 +49,7 @@ const ToolTable: React.FC<{
               note: "",
               id: record.id,
               name: record.name,
+              max: record.available_quantity,
             })
           }
         >
@@ -60,6 +64,13 @@ const ToolTable: React.FC<{
       loading={loading}
       columns={tableColumns}
       dataSource={tools.map((tool) => ({ ...tool, key: tool.id }))}
+      pagination={{
+        current: page,
+        pageSize: 10,
+        total: tools.length,
+        onChange: (page) => onNavigate(page.toString()),
+        showQuickJumper: true,
+      }}
     />
   );
 };

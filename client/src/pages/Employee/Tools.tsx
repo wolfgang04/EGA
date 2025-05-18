@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import SERVER from "../../SERVER";
 import Cart from "../../components/Employee/Tools/Cart";
 import FilterAndSearch from "../../components/Employee/Tools/FilterAndSearch";
-import ToolCard from "../../components/Employee/Tools/ToolCard";
-import { Button, Flex } from "antd";
+import { Button, Skeleton } from "antd";
 import ToolTable from "../../components/Employee/Tools/ToolTable";
 import { useSearchParams } from "react-router";
+import ToolsCard from "../../components/Employee/Tools/ToolsCard";
 
-interface Tool {
+export interface Tool {
   name: string;
   id: string;
   available_quantity: number;
@@ -22,6 +22,7 @@ interface CART {
   note: string;
   id: string;
   name: string;
+  max: number;
 }
 
 const Tools = () => {
@@ -33,14 +34,29 @@ const Tools = () => {
   const [requestSent, setRequestSent] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [displayParams, setDisplayParams] = useSearchParams();
+  const [pageParams, setPageParams] = useSearchParams();
 
-  const categoryFilter = searchParams.get("category") || "";
+  const rawCategoryFilter = searchParams.get("category") || "";
+  const categoryFilter =
+    rawCategoryFilter.charAt(0).toUpperCase() + rawCategoryFilter.slice(1);
   const searchVal = searchParams.get("search") || "";
-  const display = displayParams.get("display") || "";
+  const page = Number(pageParams.get("page") || "1");
+
+  const rawDisplay = displayParams.get("display") || "grid";
+  const display = rawDisplay.charAt(0).toUpperCase() + rawDisplay.slice(1);
+
+  useEffect(() => {
+    const currentDisplay = displayParams.get("display");
+    if (!currentDisplay) {
+      displayParams.set("display", "grid");
+      setDisplayParams(displayParams, { replace: true });
+    }
+  }, []);
 
   const filteredTools = tools.filter(
     (tool) =>
-      (!categoryFilter || tool.category_name === categoryFilter) &&
+      (!categoryFilter ||
+        tool.category_name.toLowerCase() === categoryFilter.toLowerCase()) &&
       tool.name.toLowerCase().includes(searchVal.toLowerCase()),
   );
 
@@ -52,7 +68,6 @@ const Tools = () => {
         });
 
         setTools(data);
-
         const { data: categories } = await axios.get(
           SERVER + "/category/categories",
           { withCredentials: true },
@@ -82,6 +97,10 @@ const Tools = () => {
         item.id === id ? { ...item, quantity: newQuantity } : item,
       ),
     );
+  };
+
+  const handleRemove = (id: string) => {
+    setCart((prevCart) => prevCart.filter((prev) => prev.id !== id));
   };
 
   const handleRequestTool = async (e: React.FormEvent) => {
@@ -114,32 +133,42 @@ const Tools = () => {
         searchVal={searchVal}
         categories={categories}
         onSearch={(text) => {
-          setSearchParams((prev) => {
-            const params = new URLSearchParams(prev);
-            if (text) params.set("search", text);
-            else params.delete("search");
-            return params;
-          });
+          setSearchParams(
+            (prev) => {
+              const params = new URLSearchParams(prev);
+              if (text) params.set("search", text);
+              else params.delete("search");
+              return params;
+            },
+            { replace: true },
+          );
         }}
         onFilter={(filter) => {
-          setSearchParams((prev) => {
-            const params = new URLSearchParams(prev);
-            if (filter) params.set("category", filter);
-            else params.delete("category");
-            return params;
-          });
+          setSearchParams(
+            (prev) => {
+              const params = new URLSearchParams(prev);
+              if (filter) params.set("category", filter.toLowerCase());
+              else params.delete("category");
+              return params;
+            },
+            { replace: true },
+          );
         }}
         onChangeDisplay={(display) => {
-          setDisplayParams((prev) => {
-            const params = new URLSearchParams(prev);
-            if (display) params.set("display", display);
-            else params.delete("display");
-            return params;
-          });
+          setDisplayParams(
+            (prev) => {
+              const params = new URLSearchParams(prev);
+              if (display) params.set("display", display.toLowerCase());
+              else params.delete("display");
+              return params;
+            },
+            { replace: true },
+          );
         }}
         display={display}
       />
-      <Button onClick={() => setIsVisible(true)}>cart</Button>
+
+      <Button onClick={() => setIsVisible(true)}>Cart</Button>
       {isVisible && (
         <Cart
           cart={cart}
@@ -147,30 +176,54 @@ const Tools = () => {
           onClose={() => setIsVisible(false)}
           onChangeAmount={handleChangeAmount}
           onSubmit={handleRequestTool}
+          onRemove={handleRemove}
         />
       )}
 
       {/* Custom display */}
-      {display === "Grid" ? (
-        <Flex wrap justify="center" gap="middle" style={{ marginTop: 20 }}>
-          {filteredTools.map((tool) => (
-            <ToolCard
-              isLoading={isLoading}
-              tool={tool}
-              onAdd={handleAddToCart}
-              key={tool.id}
-            />
-          ))}
-        </Flex>
-      ) : (
-        <div className="px-10">
-          <ToolTable
-            tools={filteredTools}
-            loading={isLoading}
+      <Skeleton loading={isLoading}>
+        {display === "Grid" ? (
+          <ToolsCard
+            page={page}
+            filteredTools={filteredTools}
+            isLoading={isLoading}
             onAdd={handleAddToCart}
+            onChange={(page) =>
+              setPageParams(
+                (prev) => {
+                  const params = new URLSearchParams(prev);
+                  if (page) params.set("page", page.toString());
+                  else params.delete("page");
+
+                  return params;
+                },
+                { replace: true },
+              )
+            }
           />
-        </div>
-      )}
+        ) : (
+          <div className="px-10">
+            <ToolTable
+              tools={filteredTools}
+              loading={isLoading}
+              onAdd={handleAddToCart}
+              onNavigate={(page) => {
+                setPageParams(
+                  (prev) => {
+                    const params = new URLSearchParams(prev);
+                    if (page) params.set("page", page);
+                    else params.delete("page");
+
+                    return params;
+                  },
+                  { replace: true },
+                );
+              }}
+              page={page}
+            />
+          </div>
+        )}
+      </Skeleton>
     </div>
   );
 };
