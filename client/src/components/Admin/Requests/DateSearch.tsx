@@ -1,0 +1,71 @@
+import { Button, DatePicker, Form, Input, Select, Space } from "antd";
+import { Dayjs } from "dayjs";
+import React from "react";
+
+type PickerMode = "date" | "week" | "month" | "year" | undefined;
+
+interface Props {
+  onSubmit: () => void;
+  search: string;
+  onChangeSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeOption: React.Dispatch<React.SetStateAction<PickerMode>>;
+  onChangeDate: React.Dispatch<React.SetStateAction<Dayjs | null>>;
+  dateOptions: PickerMode[];
+  dateOption: PickerMode;
+  date: Dayjs | null;
+}
+
+const DateSearch: React.FC<Props> = ({
+  onSubmit,
+  date,
+  dateOptions,
+  dateOption,
+  onChangeDate,
+  onChangeSearch,
+  onChangeOption,
+  search,
+}) => {
+  return (
+    <Form onFinish={onSubmit}>
+      <Space>
+        <Form.Item>
+          <Input
+            value={search}
+            onChange={onChangeSearch}
+            placeholder="Search"
+          />
+        </Form.Item>
+        <Form.Item>
+          <Select
+            allowClear
+            style={{ width: "100px" }}
+            placeholder="Select Date"
+            onChange={(filter) => {
+              onChangeOption((filter as PickerMode) ?? "date");
+              onChangeDate(null);
+            }}
+            defaultValue={dateOptions[0]}
+            options={dateOptions.map((date) => ({
+              label: date!.charAt(0).toUpperCase() + date!.slice(1),
+              value: date,
+            }))}
+          />
+        </Form.Item>
+        <Form.Item>
+          <DatePicker
+            value={date}
+            onChange={onChangeDate}
+            picker={dateOption}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button variant="solid" color="default" htmlType="submit">
+            Filter
+          </Button>
+        </Form.Item>
+      </Space>
+    </Form>
+  );
+};
+
+export default DateSearch;

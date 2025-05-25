@@ -43,6 +43,11 @@ const RequestToolTable: React.FC<{ requests: RequestData[] }> = ({
 }) => (
   <Table<RequestData>
     columns={tableColumns}
+    components={{
+      body: {
+        cell: (props) => <td {...props} className="w-52 hover:bg-black/10" />,
+      },
+    }}
     dataSource={requests.map((req) => ({
       ...req,
       key: req.requestedTool.publicID,

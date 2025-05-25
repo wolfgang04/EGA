@@ -30,6 +30,11 @@ const tableColumns: TableProps<StatusData>["columns"] = [
 
 const StatusTable: React.FC<{ statuses: StatusData[] }> = ({ statuses }) => (
   <Table<StatusData>
+    components={{
+      body: {
+        cell: (props) => <td {...props} className="w-52 hover:bg-black/10" />,
+      },
+    }}
     columns={tableColumns}
     dataSource={statuses.map((request) => ({
       ...request,

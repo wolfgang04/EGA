@@ -43,6 +43,11 @@ const RequestsTable: React.FC<{
 
   return (
     <Table<currentRequestsData>
+      components={{
+        body: {
+          cell: (props) => <td {...props} className="w-52 hover:bg-black/10" />,
+        },
+      }}
       columns={tableColumns}
       dataSource={requests.map((request) => ({
         ...request,

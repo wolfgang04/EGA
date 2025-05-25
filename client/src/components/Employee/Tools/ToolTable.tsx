@@ -19,7 +19,12 @@ const ToolTable: React.FC<{
   page: number;
 }> = ({ tools, loading, onAdd, onNavigate, page }) => {
   const tableColumns: TableProps<ToolData>["columns"] = [
-    { title: "Tool Name", dataIndex: "name", key: "name" },
+    {
+      title: "Tool Name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
+    },
     {
       title: "Category",
       dataIndex: "category_name",
@@ -63,6 +68,11 @@ const ToolTable: React.FC<{
     <Table<ToolData>
       loading={loading}
       columns={tableColumns}
+      components={{
+        body: {
+          cell: (props) => <td {...props} className="w-52 hover:bg-black/10" />,
+        },
+      }}
       dataSource={tools.map((tool) => ({ ...tool, key: tool.id }))}
       pagination={{
         current: page,

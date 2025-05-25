@@ -1,28 +1,19 @@
 @import "tailwindcss";
 
-
-table {
-  @apply my-5 min-w-1/2
-}
-
-
-input {
-  @apply outline-none
-}
-
-tbody > tr {
-  @apply hover:bg-black/5
-}
-
-td {
-  @apply hover:bg-black/10 w-52
-}
-
-/* 
-.history {
-  @apply min-h-[350px] min-w-[650px]
-} */
-
-h3 {
-  @apply font-bold text-2xl
+@layer {
+  table {
+    @apply my-5 min-w-1/2
+  }
+  
+  input {
+    @apply outline-none
+  }
+  
+  tbody > tr {
+    @apply hover:bg-black/5
+  }
+  
+  h3 {
+    @apply font-bold text-2xl
+  }
 }

@@ -26,64 +26,98 @@ interface HistoryTable {
   };
 }
 
-const tableColumns: TableProps<HistoryTable>["columns"] = [
-  {
-    title: "Request ID",
-    dataIndex: ["request", "public_id"],
-    key: "publicID",
-  },
-  {
-    title: "Request By",
-    render: (_, record) => {
-      const profile = record.request.requestByProfile;
-
-      if (!profile) return "N/A";
-
-      const { first, middle, last } = profile.name;
-
-      return `${last}, ${first}${middle ? ` ${middle}` : ""}`;
-    },
-    key: "request by",
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
-    key: "status",
-  },
-  {
-    title: "Changed By",
-    render: (_, record) => {
-      const profile = record.changedByProfile;
-      const { first, middle, last } = profile.name;
-      return `${last}, ${first}${middle ? ` ${middle}` : ""}`;
-    },
-    key: "changed by",
-  },
-  {
-    title: "Date",
-    dataIndex: "changed_at",
-    key: "changed at",
-    render: (date: string) =>
-      new Date(date).toLocaleString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-      }),
-  },
-];
-
 const HistoryTable: React.FC<{
   history: HistoryTable[];
   currPage: number;
   totalItems: number;
   setCurrentPage: (page: number) => void;
-}> = ({ history, currPage, setCurrentPage, totalItems }) => {
+  onLoad: boolean;
+}> = ({ history, currPage, setCurrentPage, totalItems, onLoad }) => {
   const navigate = useNavigate();
+
+  const groupedByRequest: Record<string, string[]> = {};
+
+  history.forEach((entry) => {
+    const req_id = entry.request_id;
+    if (!groupedByRequest[req_id]) {
+      groupedByRequest[req_id] = [];
+    }
+    groupedByRequest[req_id].push(entry.status);
+  });
+
+  const onlyPendingRequests = Object.entries(groupedByRequest)
+    .filter(([_, statuses]) => statuses.length === 1)
+    .map(([request_id]) => request_id);
+
+  const tableColumns: TableProps<HistoryTable>["columns"] = [
+    {
+      title: "Request ID",
+      dataIndex: ["request", "public_id"],
+      key: "publicID",
+    },
+    {
+      title: "Request By",
+      render: (_, record) => {
+        const profile = record.request.requestByProfile;
+
+        if (!profile) return "N/A";
+
+        const { first, middle, last } = profile.name;
+
+        return `${last}, ${first}${middle ? ` ${middle}` : ""}`;
+      },
+      key: "request by",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      filters: [
+        { text: "pending", value: "pending" },
+        { text: "denied", value: "denied" },
+        { text: "approved", value: "approved" },
+        { text: "borrowed", value: "borrowed" },
+        { text: "returned", value: "returned" },
+      ],
+      onFilter: (value, record) =>
+        value === "pending"
+          ? onlyPendingRequests.find(
+              (request) => request === record.request_id,
+            ) !== undefined
+          : record.status === value,
+    },
+    {
+      title: "Changed By",
+      render: (_, record) => {
+        const profile = record.changedByProfile;
+        const { first, middle, last } = profile.name;
+        return `${last}, ${first}${middle ? ` ${middle}` : ""}`;
+      },
+      key: "changed by",
+    },
+    {
+      title: "Date",
+      dataIndex: "changed_at",
+      key: "changed at",
+      render: (date: string) =>
+        new Date(date).toLocaleString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        }),
+    },
+  ];
 
   return (
     <Table<HistoryTable>
+      components={{
+        body: {
+          cell: (props) => <td {...props} className="w-52 hover:bg-black/10" />,
+        },
+      }}
+      loading={onLoad}
       columns={tableColumns}
       dataSource={history.map((history) => ({
         ...history,
@@ -103,7 +137,13 @@ const HistoryTable: React.FC<{
           },
         };
       }}
-      className="hover:cursor-pointer"
+      rowClassName={(record) => {
+        return onlyPendingRequests.findIndex(
+          (id) => id === record.request_id,
+        ) !== -1
+          ? "bg-yellow-50"
+          : "";
+      }}
     />
   );
 };
