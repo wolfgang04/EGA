@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import {
   ChangeRequestStatus,
   CreateRequestToolBody,
+  RequestToolInterface,
+  ToolAvailability,
 } from "../models/Request.model";
 import {
   Profile,
@@ -12,7 +14,7 @@ import {
   Tool,
 } from "../models/sequelize";
 import Category from "../models/sequelize/category";
-import { literal, Op, QueryTypes } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
 
 export const requestTools = async (
   req: Request<{}, {}, CreateRequestToolBody>,
@@ -153,6 +155,59 @@ export const changeRequestStatus = async (
     const reqq = await request.findByPk(requestID);
     if (!reqq)
       return res.status(400).json({ msg: "Request history not found" });
+
+    if (status === "approved") {
+      const toolsInRequest = await RequestTool.findAll({
+        where: { requestID: reqq.id },
+        attributes: ["toolID", "quantity"],
+      });
+
+      for (const tool of toolsInRequest as unknown as RequestToolInterface[]) {
+        const toolID = tool.toolID;
+        const quantity = tool.quantity;
+
+        const [toolAvailability] = await sequelize.query<ToolAvailability>(
+          `
+          SELECT
+            t.quantity AS total_quantity,
+            COALESCE(t.quantity - SUM(
+              CASE
+                WHEN
+                  latest_status.status IN ('approved', 'borrowed')
+                THEN
+                  rt.quantity
+                ELSE
+                  0
+              END
+            ), t.quantity) AS available_quantity
+          FROM tool t
+          LEFT JOIN request_tool rt ON t.id = rt.tool_id
+          LEFT JOIN (
+            SELECT DISTINCT ON (request_id)
+              request_id, status
+            FROM
+              request_status_history
+            ORDER BY
+              request_id, changed_at DESC
+          ) AS latest_status ON latest_status.request_id = rt.request_id
+          WHERE
+            t.id = :toolID
+          GROUP BY
+            t.quantity;
+        `,
+          {
+            replacements: { toolID },
+            type: QueryTypes.SELECT,
+          }
+        );
+
+        if (
+          !toolAvailability ||
+          quantity > Number(toolAvailability.available_quantity)
+        )
+          return res.status(400).json({ msg: "Not enough available tools" });
+      }
+    }
 
     await RequestHistory.create({
       status,

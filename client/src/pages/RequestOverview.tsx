@@ -1,17 +1,18 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import SERVER from "../SERVER";
 import type { RequestOverview, RequestStatus } from "../models/Request.model";
 import RequestToolTable from "../components/RequestOverview/RequestToolTable";
 import StatusTable from "../components/RequestOverview/StatusTable";
-import { Button } from "antd";
+import { Button, message } from "antd";
 
 const RequestOverview = () => {
   const [requestDetails, setRequestDetails] = useState<RequestOverview>();
   const [isLoading, setIsLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [statusChanged, setStatusChanged] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const role = localStorage.getItem("role") as "admin" | "employee";
   const roleOptions = {
@@ -25,6 +26,7 @@ const RequestOverview = () => {
   const location = useLocation();
   const requestID = location.pathname.slice(12);
 
+  // fetch request details
   useEffect(() => {
     const fetchRequestOverview = async () => {
       try {
@@ -52,6 +54,7 @@ const RequestOverview = () => {
       role === "admin") ||
     (["pending", "returned"].includes(currStatus) && role === "employee");
 
+  // decides which options to show depending on user role and current status
   useEffect(() => {
     const currStatusIdx = roleOptions[role].findIndex(
       (status) => status === currStatus,
@@ -61,6 +64,13 @@ const RequestOverview = () => {
     const nextStatus = roleOptions[role].slice(currStatusIdx, nextOptions);
     setNextStatuses(nextStatus);
   }, [currStatus]);
+
+  const error = (msg: string) => {
+    messageApi.open({
+      type: "error",
+      content: msg,
+    });
+  };
 
   const handleChangeStatus = async () => {
     try {
@@ -74,8 +84,10 @@ const RequestOverview = () => {
 
       setIsVisible(false);
       setStatusChanged((prev) => !prev);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      const errr = err as AxiosError<{ msg: string }>;
+      const msg = errr?.response?.data?.msg!;
+      error(msg);
     }
   };
 
@@ -83,6 +95,7 @@ const RequestOverview = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
+      {contextHolder}
       <p>Request ID: {requestDetails?.id}</p>
       <p>
         Request By:{" "}

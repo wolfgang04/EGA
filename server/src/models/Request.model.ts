@@ -43,3 +43,18 @@ export type LatestChange = {
   requestID: number;
   lastChangedAt: string;
 };
+
+export interface RequestToolInterface {
+  toolID: number;
+  quantity: number;
+}
+
+export interface ToolAvailability {
+  id: number;
+  name: string;
+  total_quantity: number;
+  category_id: number;
+  location: string;
+  category_name: string;
+  available_quantity: number;
+}
