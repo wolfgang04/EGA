@@ -16,6 +16,18 @@ export const getUsers = async (req: Request, res: Response): Promise<any> => {
           as: "userProfile",
           attributes: ["name", "email"],
         },
+        {
+          model: User,
+          as: "creator",
+          attributes: ["public_id"],
+          include: [
+            {
+              model: Profile,
+              as: "userProfile",
+              attributes: ["name"],
+            },
+          ],
+        },
       ],
     });
 

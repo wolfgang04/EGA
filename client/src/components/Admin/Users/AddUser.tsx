@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { NewUser, UserProfile, UserType } from "../../../models/User.model";
 import AddUserInputs from "./AddUserInputs";
+import { Form, Modal } from "antd";
+import dayjs, { Dayjs } from "dayjs";
 
 interface Props {
   onAdd: (user: NewUser) => void;
   onClose: () => void;
+  isOpen: boolean;
 }
 
-const AddUser: React.FC<Props> = ({ onAdd, onClose }) => {
+const AddUser: React.FC<Props> = ({ onAdd, onClose, isOpen }) => {
   const [profile, setProfile] = useState<UserProfile>({
     name: {
       first: "",
@@ -18,13 +21,19 @@ const AddUser: React.FC<Props> = ({ onAdd, onClose }) => {
   });
   const [address, setAddress] = useState("");
   const [contact, setContact] = useState("");
-  const [birthday, setBirthday] = useState<Date>(new Date());
+  const [birthday, setBirthday] = useState<Dayjs>(dayjs());
   const [role, setRole] = useState<UserType>("employee");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    onAdd({ userProfile: profile, birthday, userType: role, address, contact });
+    onAdd({
+      userProfile: profile,
+      birthday: birthday.toDate(),
+      userType: role,
+      address,
+      contact,
+    });
     setProfile({
       name: {
         first: "",
@@ -35,6 +44,8 @@ const AddUser: React.FC<Props> = ({ onAdd, onClose }) => {
     });
     setAddress("");
     setContact("");
+
+    onClose();
   };
 
   const handleChangeFirstName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,36 +94,36 @@ const AddUser: React.FC<Props> = ({ onAdd, onClose }) => {
   const handleChangeContact = (e: React.ChangeEvent<HTMLInputElement>) => {
     setContact(e.target.value);
   };
-  const handleChangeBirthday = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const [year, month, day] = e.target.value.split("-");
-    setBirthday(new Date(Number(year), Number(month) - 1, Number(day)));
-  };
 
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-1/2 bg-black/5">
-      <div className="w-full" />
+    <Modal
+      title="Create User"
+      closable={{ "aria-label": "Custom Close Button" }}
+      open={isOpen}
+      onOk={handleSubmit}
+      onCancel={onClose}
+    >
+      {/* <Form>
+
+      </Form> */}
       <form onSubmit={handleSubmit} className="flex flex-col">
         <AddUserInputs
           address={address}
           birthday={birthday}
           contact={contact}
           onChangeAddress={handleChangeAddress}
-          onChangeBirthday={handleChangeBirthday}
+          onChangeBirthday={setBirthday}
           onChangeContact={handleChangeContact}
           onChangeEmail={handleChangeEmail}
           onChangeFirstName={handleChangeFirstName}
           onChangeLastName={handleChangeLastName}
           onChangeMiddleName={handleChangeMiddleName}
-          onSetRole={(e) => setRole(e)}
+          onSetRole={setRole}
+          role={role}
           profile={profile}
         />
-
-        <button type="submit">add</button>
       </form>
-      <button className="block w-full" onClick={onClose}>
-        close
-      </button>
-    </div>
+    </Modal>
   );
 };
 

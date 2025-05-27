@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import SERVER from "../../SERVER";
 import { NewUser, UserRecord } from "../../models/User.model";
-import UsersTable from "../../components/Admin/Users/UsersTable";
 import AddUser from "../../components/Admin/Users/AddUser";
+import UserTable from "../../components/Admin/Users/UserTable";
+import { Button } from "antd";
 
 const Users = () => {
   const [users, setUsers] = useState<UserRecord[]>([]);
@@ -33,6 +34,10 @@ const Users = () => {
           userType: user.userType,
           created_by: null,
           created_at: new Date().toISOString(),
+          creator: {
+            public_id: "",
+            userProfile: { name: { first: "", middle: "", last: "" } },
+          },
           userProfile: {
             name: {
               first: user.userProfile.name.first,
@@ -58,16 +63,20 @@ const Users = () => {
     };
 
     fetchUsers();
-  }, [users]);
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <button onClick={() => setIsVisible(true)}>add</button>
+      <Button onClick={() => setIsVisible(true)}>add</Button>
       {isVisible && (
-        <AddUser onClose={() => setIsVisible(false)} onAdd={handleAddUser} />
+        <AddUser
+          isOpen={isVisible}
+          onClose={() => setIsVisible(false)}
+          onAdd={handleAddUser}
+        />
       )}
 
-      <UsersTable users={users} />
+      <UserTable users={users} />
     </div>
   );
 };

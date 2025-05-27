@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SERVER from "../../SERVER";
 import RequestsTable from "../../components/Employee/Requests/RequestsTable";
 import { CurrReq } from "../../models/Request.model";

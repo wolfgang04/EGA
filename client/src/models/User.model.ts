@@ -11,10 +11,16 @@ export interface UserProfile {
 
 export type UserType = "employee" | "admin";
 
+export type Creator = {
+  public_id: string;
+  userProfile: { name: Name };
+};
+
 export interface UserRecord {
   public_id: string;
   userType: UserType;
   created_by: string | null;
+  creator: Creator;
   created_at: string; // ISO date
   userProfile: UserProfile;
 }

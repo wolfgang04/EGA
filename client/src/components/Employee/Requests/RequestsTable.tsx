@@ -3,17 +3,12 @@ import { CurrReq as currentRequestsData } from "../../../models/Request.model";
 import { Table, TableProps } from "antd";
 import { useNavigate } from "react-router";
 
-export interface CurrReq {
-  changed_at: Date;
-  status: string;
-  request_id: string;
-}
-
 const tableColumns: TableProps<currentRequestsData>["columns"] = [
   {
     title: "Request ID",
     dataIndex: "request_id",
     key: "request id",
+    render: (id) => "rq-" + id,
   },
   {
     title: "Status",
@@ -40,6 +35,7 @@ const RequestsTable: React.FC<{
   setPage: (page: number) => void;
 }> = ({ requests, setPage }) => {
   const navigate = useNavigate();
+  console.log(requests);
 
   return (
     <Table<currentRequestsData>
