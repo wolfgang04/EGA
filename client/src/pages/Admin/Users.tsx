@@ -48,20 +48,22 @@ const Users = () => {
           },
         },
       ]);
+
+      fetchUsers();
     } catch (error) {
       console.log(error);
     }
   };
 
+  const fetchUsers = async () => {
+    const { data } = await axios.get(`${SERVER}/user/users`, {
+      withCredentials: true,
+    });
+
+    setUsers(data);
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      const { data } = await axios.get(`${SERVER}/user/users`, {
-        withCredentials: true,
-      });
-
-      setUsers(data);
-    };
-
     fetchUsers();
   }, []);
 

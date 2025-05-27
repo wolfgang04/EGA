@@ -68,7 +68,15 @@ export const getRequestUpdates = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const { page = 1, filter = "", date, dateType = "" } = req.query;
+  const {
+    page = 1,
+    filter = "",
+    date,
+    dateType = "",
+    sort = "DESC",
+  } = req.query;
+  console.log(sort);
+
   const limit = 10;
   let baseDate: Date, endDate: Date;
   if (typeof date === "string") {
@@ -110,7 +118,7 @@ export const getRequestUpdates = async (
       limit: Number(limit),
       offset: (Number(page) - 1) * Number(limit),
       attributes: ["request_id", "status", "changed_by", "changed_at"],
-      order: [["changed_at", "DESC"]],
+      order: [["changed_at", sort as string]],
       where: { ...where },
       include: [
         {

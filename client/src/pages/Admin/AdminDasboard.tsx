@@ -4,7 +4,7 @@ import SERVER from "../../SERVER";
 import { Histories } from "../../models/History.model";
 import HistoryTable from "../../components/Admin/Requests/HistoryTable";
 import { useSearchParams } from "react-router";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import DateSearch from "../../components/Admin/Requests/DateSearch";
 
 type PickerMode = "date" | "week" | "month" | "year" | undefined;
@@ -18,8 +18,10 @@ const AdminDashboard = () => {
   const [pageParams, setPageParams] = useSearchParams();
   const [dateOption, setDateOption] = useState<PickerMode>();
   const [date, setDate] = useState<Dayjs | null>(null);
+  const [sortParams, setSortParams] = useSearchParams();
 
   const page = pageParams.get("page") || "1";
+  const sort = sortParams.get("sort") || "DESC";
 
   const dateOptions: PickerMode[] = ["date", "week", "month", "year"];
 
@@ -35,6 +37,7 @@ const AdminDashboard = () => {
               filter: search,
               date: date?.format("YYYY-MM-DD"),
               dateType: date && dateOption === undefined ? "date" : dateOption,
+              sort: sort.toUpperCase(),
             },
           },
         );
@@ -73,6 +76,15 @@ const AdminDashboard = () => {
         onChangeOption={setDateOption}
         onSubmit={handleSumbit}
         search={search}
+        onSort={(sort) => {
+          setSortParams((prev) => {
+            const params = new URLSearchParams(prev);
+            if (sort) params.set("sort", sort.toLowerCase());
+            else params.delete("sort");
+
+            return params;
+          });
+        }}
       />
 
       <HistoryTable

@@ -13,6 +13,7 @@ interface Props {
   dateOptions: PickerMode[];
   dateOption: PickerMode;
   date: Dayjs | null;
+  onSort: (sort: string) => void;
 }
 
 const DateSearch: React.FC<Props> = ({
@@ -24,6 +25,7 @@ const DateSearch: React.FC<Props> = ({
   onChangeSearch,
   onChangeOption,
   search,
+  onSort,
 }) => {
   return (
     <Form onFinish={onSubmit}>
@@ -35,6 +37,7 @@ const DateSearch: React.FC<Props> = ({
             placeholder="Search"
           />
         </Form.Item>
+
         <Form.Item>
           <Select
             allowClear
@@ -51,6 +54,19 @@ const DateSearch: React.FC<Props> = ({
             }))}
           />
         </Form.Item>
+
+        <Form.Item>
+          <Select
+            style={{ width: "115px" }}
+            defaultValue={"DESC"}
+            options={[
+              { label: "Descending", value: "DESC" },
+              { label: "Ascending", value: "ASC" },
+            ]}
+            onChange={(sort) => onSort(sort)}
+          />
+        </Form.Item>
+
         <Form.Item>
           <DatePicker
             value={date}
@@ -58,6 +74,7 @@ const DateSearch: React.FC<Props> = ({
             picker={dateOption}
           />
         </Form.Item>
+
         <Form.Item>
           <Button variant="solid" color="default" htmlType="submit">
             Filter
