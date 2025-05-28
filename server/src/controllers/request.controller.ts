@@ -75,8 +75,6 @@ export const getRequestUpdates = async (
     dateType = "",
     sort = "DESC",
   } = req.query;
-  console.log(sort);
-
   const limit = 10;
   let baseDate: Date, endDate: Date;
   if (typeof date === "string") {
@@ -239,14 +237,14 @@ export const requestOverview = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const { requestID } = req.query;
+  const { id } = req.params;
 
-  if (!requestID || Array.isArray(requestID) || isNaN(Number(requestID)))
-    return res.status(400).json({ msg: "Invalid or missing requestID" });
+  if (!id || Array.isArray(id) || isNaN(Number(id)))
+    return res.status(400).json({ msg: "Invalid or missing id" });
 
   try {
     const requestDetails = await request.findOne({
-      where: { id: Number(requestID) },
+      where: { id: Number(id) },
       attributes: ["request_by", "id"],
       include: [
         {

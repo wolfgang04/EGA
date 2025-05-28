@@ -101,3 +101,24 @@ export const getTools = async (_req: Request, res: Response): Promise<any> => {
     }
   }
 };
+
+export const editTool = async (req: Request, res: Response): Promise<any> => {
+  const { id } = req.params;
+  const { edit } = req.body;
+
+  if (Object.keys(edit).length === 0)
+    return res.status(400).json({ msg: "No valid fields to update" });
+
+  try {
+    await Tool.update(edit, { where: { id } });
+
+    return res.status(200).json({ msg: "Tool updated successfully" });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error occured while editing tool:", error);
+      return res.status(500).json({ msg: "Error occured while editing tool" });
+    }
+    console.error("Unknown error occured:", error);
+    return res.status(500).json({ msg: "Unknown error occured" });
+  }
+};

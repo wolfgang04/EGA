@@ -24,16 +24,16 @@ const RequestOverview = () => {
   const [nextStatuses, setNextStatuses] = useState<RequestStatus[]>([]);
 
   const location = useLocation();
-  const requestID = location.pathname.slice(12);
+  const id = location.pathname.slice(12);
 
   // fetch request details
   useEffect(() => {
     const fetchRequestOverview = async () => {
       try {
-        const { data } = await axios.get(`${SERVER}/request/overview`, {
+        const { data } = await axios.get(`${SERVER}/request/overview/${id}`, {
           withCredentials: true,
-          params: { requestID },
         });
+        console.log(`${SERVER}/request/overview/${id}`);
 
         setRequestDetails(data);
         setCurrStatus(data.statuses[0].status);

@@ -1,15 +1,37 @@
 import React from "react";
 import { Tool } from "../../../models/Tool.model";
-import { Table, TableProps } from "antd";
+import { Button, Table, TableProps } from "antd";
 
-const tableColumns: TableProps<Tool>["columns"] = [
-  { title: "ID", dataIndex: "publicID", key: "publicID" },
-  { title: "Tool Name", dataIndex: "name", key: "name" },
-  { title: "Quantity", dataIndex: "quantity", key: "quantity" },
-  { title: "Location", dataIndex: "location", key: "location" },
-];
+const ToolTable: React.FC<{
+  tools: Tool[];
+  onEdit: (
+    id: string,
+    quantity: number,
+    location: string,
+    name: string,
+  ) => void;
+}> = ({ tools, onEdit }) => {
+  const tableColumns: TableProps<Tool>["columns"] = [
+    { title: "ID", dataIndex: "publicID", key: "publicID" },
+    { title: "Tool Name", dataIndex: "name", key: "name" },
+    { title: "Quantity", dataIndex: "quantity", key: "quantity" },
+    { title: "Location", dataIndex: "location", key: "location" },
+    {
+      title: "Action",
+      render: (record) => {
+        const handleAdd = () => {
+          onEdit(record.id, record.quantity, record.location, record.name);
+        };
 
-const ToolTable: React.FC<{ tools: Tool[] }> = ({ tools }) => {
+        return (
+          <Button variant="solid" color="default" onClick={handleAdd}>
+            Edit
+          </Button>
+        );
+      },
+    },
+  ];
+
   return (
     <Table<Tool>
       columns={tableColumns}
