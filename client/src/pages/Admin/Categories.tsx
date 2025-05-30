@@ -1,23 +1,29 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SERVER from "../../SERVER";
-import { Category } from "../../models/Category.model";
-import { NavLink } from "react-router";
+import { Category, CategoryOverView } from "../../models/Category.model";
 import Create from "../../components/Admin/Categories/Create";
+import CategoryCard from "../../components/Admin/Categories/CategoryCard";
 
 const Categories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesOverview, setCategoriesOverview] = useState<
+    CategoryOverView[]
+  >([]);
   const [createCategory, setCreateCategory] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getCategories = async () => {
       try {
-        const { data } = await axios.get(`${SERVER}/category/categories`, {
-          withCredentials: true,
-        });
+        const { data } = await axios.get(
+          `${SERVER}/category/categoriesOverview`,
+          {
+            withCredentials: true,
+          },
+        );
 
-        setCategories(data);
+        setCategoriesOverview(data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -53,14 +59,15 @@ const Categories = () => {
 
       <div className="flex gap-2">
         {isLoading !== true ? (
-          categories.map((category, idx) => (
-            <NavLink
-              to={category.name}
-              state={{ categoryID: category.id }}
+          categoriesOverview.map((category, idx) => (
+            <CategoryCard
+              id={category.id}
+              available={category.total_available}
+              name={category.category_name}
+              totalQuantity={category.total_quantity}
+              totalTools={category.total_tools}
               key={idx}
-            >
-              <p className="cursor-pointer hover:underline">{category.name}</p>
-            </NavLink>
+            />
           ))
         ) : (
           <p>Loading...</p>

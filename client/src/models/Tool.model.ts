@@ -1,7 +1,8 @@
 export interface Tool {
-  publicID: string;
+  public_id: string;
   name: string;
   location: string;
+  total_available?: number;
   quantity: number;
 }
 

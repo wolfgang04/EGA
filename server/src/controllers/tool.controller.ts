@@ -36,10 +36,44 @@ export const getCategoryTools = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const { categoryID } = req.query;
+  const { id } = req.params;
 
   try {
-    const tools = await Tool.findAll({ where: { categoryID } });
+    // const tools = await Tool.findAll({ where: { categoryID } });
+
+    const tools = await sequelize.query(
+      `
+      SELECT
+        t.*,
+        SUM(t.quantity - COALESCE(used.total_requested, 0)) AS total_available
+      FROM 
+        tool t
+      LEFT JOIN (
+        SELECT
+          tool_id,
+          SUM(quantity) AS total_requested
+        FROM 
+          request_tool rt
+        INNER JOIN (
+          SELECT DISTINCT ON (request_id)
+            request_id, status
+          FROM 
+            request_status_history rsh
+          ORDER BY
+            request_id, changed_at DESC
+        ) rsh ON rsh.request_id = rt.request_id
+        WHERE
+          rsh.status IN ('approved', 'borrowed')
+        GROUP BY
+          rt.tool_id
+      ) AS used ON used.tool_id = t.id
+      WHERE
+        t.category_id = :categoryID
+      GROUP BY
+        t.id;
+      `,
+      { replacements: { categoryID: id }, type: QueryTypes.SELECT }
+    );
 
     return res.status(200).json(tools);
   } catch (error) {

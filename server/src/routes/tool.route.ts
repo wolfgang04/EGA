@@ -9,7 +9,7 @@ import {
 const router = Router();
 
 router.post("/create", createTool);
-router.get("/tools", getCategoryTools);
+router.get("/tools/:id", getCategoryTools);
 router.get("/all", getTools);
 router.post("/edit/:id", editTool);
 

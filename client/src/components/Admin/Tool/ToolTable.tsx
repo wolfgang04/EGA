@@ -10,11 +10,13 @@ const ToolTable: React.FC<{
     location: string,
     name: string,
   ) => void;
-}> = ({ tools, onEdit }) => {
+  loading: boolean;
+}> = ({ tools, onEdit, loading }) => {
   const tableColumns: TableProps<Tool>["columns"] = [
-    { title: "ID", dataIndex: "publicID", key: "publicID" },
+    { title: "ID", dataIndex: "public_id", key: "publicID" },
     { title: "Tool Name", dataIndex: "name", key: "name" },
     { title: "Quantity", dataIndex: "quantity", key: "quantity" },
+    { title: "Available", dataIndex: "total_available", key: "totalAvailable" },
     { title: "Location", dataIndex: "location", key: "location" },
     {
       title: "Action",
@@ -34,8 +36,9 @@ const ToolTable: React.FC<{
 
   return (
     <Table<Tool>
+      loading={loading}
       columns={tableColumns}
-      dataSource={tools.map((tool) => ({ ...tool, key: tool.publicID }))}
+      dataSource={tools.map((tool) => ({ ...tool, key: tool.public_id }))}
       components={{
         body: {
           cell: (props) => <td {...props} className="w-52" />,

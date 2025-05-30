@@ -20,20 +20,26 @@ const Tool = () => {
   });
   const { state } = useLocation();
   const [msg, setMsg] = useState("updated successfully");
-
   const [messageApi, contextHolder] = message.useMessage();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchTools = async () => {
       try {
-        const { data } = await axios.get(`${SERVER}/tool/tools`, {
-          withCredentials: true,
-          params: { categoryID: state.categoryID },
-        });
+        const { data } = await axios.get(
+          `${SERVER}/tool/tools/${state.categoryID}`,
+          {
+            withCredentials: true,
+          },
+        );
+
+        console.log(data);
 
         setTools(data);
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -50,7 +56,10 @@ const Tool = () => {
         },
       );
 
-      setTools((prevTools) => [...prevTools, { ...toolDetails, publicID: "" }]);
+      setTools((prevTools) => [
+        ...prevTools,
+        { ...toolDetails, public_id: "" },
+      ]);
     } catch (error) {
       console.log(error);
     }
@@ -110,6 +119,7 @@ const Tool = () => {
 
       <ToolTable
         tools={tools}
+        loading={isLoading}
         onEdit={(
           id: string,
           quantity: number,
