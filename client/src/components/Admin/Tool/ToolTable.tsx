@@ -16,7 +16,12 @@ const ToolTable: React.FC<{
     { title: "ID", dataIndex: "public_id", key: "publicID" },
     { title: "Tool Name", dataIndex: "name", key: "name" },
     { title: "Quantity", dataIndex: "quantity", key: "quantity" },
-    { title: "Available", dataIndex: "total_available", key: "totalAvailable" },
+    {
+      title: "Available",
+      dataIndex: "total_available",
+      key: "totalAvailable",
+      render: (available) => (available < 0 ? 0 : available),
+    },
     { title: "Location", dataIndex: "location", key: "location" },
     {
       title: "Action",

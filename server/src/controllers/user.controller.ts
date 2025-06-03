@@ -44,7 +44,8 @@ export const getUsers = async (req: Request, res: Response): Promise<any> => {
 };
 
 export const getUser = async (req: Request, res: Response): Promise<any> => {
-  const { public_id } = req.query;
+  const { public_id } = req.params;
+  console.log(req.params);
 
   if (!public_id || typeof public_id !== "string")
     return res
@@ -69,6 +70,32 @@ export const getUser = async (req: Request, res: Response): Promise<any> => {
     if (error instanceof Error) {
       console.error("Error fetching user:", error);
       return res.status(500).json({ msg: "Error fetching user" });
+    } else {
+      console.error("Unknown error occured");
+      return res.status(500).json({ msg: "Unknown error occured" });
+    }
+  }
+};
+
+export const profile = async (req: Request, res: Response): Promise<any> => {
+  const id = Number(req.session.userID);
+
+  try {
+    const profile = await Profile.findByPk(id, {
+      include: [
+        {
+          model: User,
+          as: "userProfile",
+          attributes: ["public_id"],
+        },
+      ],
+    });
+
+    return res.status(200).json(profile);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching profile:", error);
+      return res.status(500).json({ msg: "Error fetching profile" });
     } else {
       console.error("Unknown error occured");
       return res.status(500).json({ msg: "Unknown error occured" });

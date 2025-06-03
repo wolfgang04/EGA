@@ -72,19 +72,6 @@ const HistoryTable: React.FC<{
       title: "Status",
       dataIndex: "status",
       key: "status",
-      filters: [
-        { text: "pending", value: "pending" },
-        { text: "denied", value: "denied" },
-        { text: "approved", value: "approved" },
-        { text: "borrowed", value: "borrowed" },
-        { text: "returned", value: "returned" },
-      ],
-      onFilter: (value, record) =>
-        value === "pending"
-          ? onlyPendingRequests.find(
-              (request) => request === record.request_id,
-            ) !== undefined
-          : record.status === value,
     },
     {
       title: "Changed By",

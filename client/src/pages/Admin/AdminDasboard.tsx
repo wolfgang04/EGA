@@ -64,28 +64,31 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <DateSearch
-        date={date}
-        dateOption={dateOption}
-        dateOptions={dateOptions}
-        onChangeDate={setDate}
-        onChangeSearch={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setSearch(e.target.value)
-        }
-        onChangeOption={setDateOption}
-        onSubmit={handleSumbit}
-        search={search}
-        onSort={(sort) => {
-          setSortParams((prev) => {
-            const params = new URLSearchParams(prev);
-            if (sort) params.set("sort", sort.toLowerCase());
-            else params.delete("sort");
+    <div className="m-6 rounded-lg border border-gray-200 bg-white">
+      <div className="p-5">
+        <h4 className="mb-2">All Requests</h4>
+        <DateSearch
+          date={date}
+          dateOption={dateOption}
+          dateOptions={dateOptions}
+          onChangeDate={setDate}
+          onChangeSearch={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setSearch(e.target.value)
+          }
+          onChangeOption={setDateOption}
+          onSubmit={handleSumbit}
+          search={search}
+          onSort={(sort) => {
+            setSortParams((prev) => {
+              const params = new URLSearchParams(prev);
+              if (sort) params.set("sort", sort.toLowerCase());
+              else params.delete("sort");
 
-            return params;
-          });
-        }}
-      />
+              return params;
+            });
+          }}
+        />
+      </div>
 
       <HistoryTable
         history={histories}

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import SERVER from "../../SERVER";
 import RequestsTable from "../../components/Employee/Requests/RequestsTable";
 import { CurrReq } from "../../models/Request.model";
-import { Spin } from "antd";
+import { Card, Spin } from "antd";
 
 const Requests = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -39,22 +39,22 @@ const Requests = () => {
   }, []);
 
   return isLoading === false ? (
-    <div className="flex justify-center gap-2 text-center">
-      <div className="flex flex-col">
-        <h2>Current Requests</h2>
+    <div className="flex justify-center gap-2">
+      <Card>
+        <h3>Current Requests</h3>
         <RequestsTable
           requests={currRequests}
           setPage={(page) => setCurrReqsPage(page)}
         />
-      </div>
+      </Card>
 
-      <div className="flex flex-col">
-        <h2>Previous Requests</h2>
+      <Card>
+        <h3>Previous Requests</h3>
         <RequestsTable
           requests={prevRequests}
           setPage={(page) => setPrevReqsPage(page)}
         />
-      </div>
+      </Card>
     </div>
   ) : (
     <Spin />

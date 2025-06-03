@@ -1,3 +1,4 @@
+import { SearchOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Form, Input, Select, Space } from "antd";
 import { Dayjs } from "dayjs";
 import React from "react";
@@ -30,15 +31,17 @@ const DateSearch: React.FC<Props> = ({
   return (
     <Form onFinish={onSubmit}>
       <Space>
-        <Form.Item>
+        <Form.Item style={{ marginBottom: 0 }}>
           <Input
             value={search}
             onChange={onChangeSearch}
             placeholder="Search"
+            style={{ width: "20rem", boxShadow: "none" }}
+            prefix={<SearchOutlined className="text-gray-400" />}
           />
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item style={{ marginBottom: 0 }}>
           <Select
             allowClear
             style={{ width: "100px" }}
@@ -55,7 +58,7 @@ const DateSearch: React.FC<Props> = ({
           />
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item style={{ marginBottom: 0 }}>
           <Select
             style={{ width: "115px" }}
             defaultValue={"DESC"}
@@ -67,7 +70,7 @@ const DateSearch: React.FC<Props> = ({
           />
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item style={{ marginBottom: 0 }}>
           <DatePicker
             value={date}
             onChange={onChangeDate}
@@ -75,7 +78,7 @@ const DateSearch: React.FC<Props> = ({
           />
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item style={{ marginBottom: 0 }}>
           <Button variant="solid" color="default" htmlType="submit">
             Filter
           </Button>

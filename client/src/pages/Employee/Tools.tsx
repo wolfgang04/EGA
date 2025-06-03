@@ -127,7 +127,7 @@ const Tools = () => {
   };
 
   return (
-    <div className="p-5 text-center">
+    <div className="text-center">
       <FilterAndSearch
         category={categoryFilter}
         searchVal={searchVal}
