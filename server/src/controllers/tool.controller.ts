@@ -39,13 +39,12 @@ export const getCategoryTools = async (
   const { id } = req.params;
 
   try {
-    // const tools = await Tool.findAll({ where: { categoryID } });
-
     const tools = await sequelize.query(
       `
       SELECT
         t.*,
-        SUM(t.quantity - COALESCE(used.total_requested, 0)) AS total_available
+        SUM(t.quantity - COALESCE(used.total_requested, 0)) AS total_available,
+        borrowers_info.borrowers
       FROM 
         tool t
       LEFT JOIN (
@@ -67,10 +66,34 @@ export const getCategoryTools = async (
         GROUP BY
           rt.tool_id
       ) AS used ON used.tool_id = t.id
+       LEFT JOIN (
+        SELECT
+          rt.tool_id,
+          ARRAY_AGG(DISTINCT jsonb_build_object('name', p.name, 'request_id', r.id))
+            FILTER (WHERE r.id IS NOT NULL) AS borrowers
+        FROM
+          request_tool rt
+        INNER JOIN
+          request r ON r.id = rt.request_id
+        INNER JOIN
+          profile p ON p.id = r.request_by
+        INNER JOIN (
+          SELECT DISTINCT ON (request_id)
+            request_id, status
+          FROM
+            request_status_history rsh
+          ORDER BY
+            request_id, changed_at DESC
+        ) latest_status ON latest_status.request_id = r.id
+        WHERE
+          latest_status.status IN ('approved', 'borrowed')
+        GROUP BY
+          rt.tool_id
+      ) borrowers_info ON borrowers_info.tool_id = t.id
       WHERE
         t.category_id = :categoryID
       GROUP BY
-        t.id;
+        t.id, borrowers_info.borrowers;
       `,
       { replacements: { categoryID: id }, type: QueryTypes.SELECT }
     );

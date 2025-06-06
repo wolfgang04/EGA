@@ -1,4 +1,4 @@
-import { Table, TableProps } from "antd";
+import { Pagination, Table, TableProps } from "antd";
 import React from "react";
 import { useNavigate } from "react-router";
 
@@ -34,6 +34,9 @@ const HistoryTable: React.FC<{
   onLoad: boolean;
 }> = ({ history, currPage, setCurrentPage, totalItems, onLoad }) => {
   const navigate = useNavigate();
+
+  const start = (currPage - 1) * 10 + 1;
+  const end = Math.min(start + 10 - 1, totalItems);
 
   const groupedByRequest: Record<string, string[]> = {};
 
@@ -98,40 +101,50 @@ const HistoryTable: React.FC<{
   ];
 
   return (
-    <Table<HistoryTable>
-      components={{
-        body: {
-          cell: (props) => <td {...props} className="w-52 hover:bg-black/10" />,
-        },
-      }}
-      loading={onLoad}
-      columns={tableColumns}
-      dataSource={history.map((history) => ({
-        ...history,
-        key: history.changed_at,
-      }))}
-      pagination={{
-        current: currPage,
-        pageSize: 10,
-        total: totalItems,
-        onChange: (page) => setCurrentPage(page),
-        showQuickJumper: true,
-      }}
-      onRow={(record) => {
-        return {
-          onClick: () => {
-            navigate("/request/" + record.request.public_id);
+    <>
+      <Table<HistoryTable>
+        components={{
+          body: {
+            cell: (props) => (
+              <td {...props} className="w-52 hover:bg-black/10" />
+            ),
           },
-        };
-      }}
-      rowClassName={(record) => {
-        return onlyPendingRequests.findIndex(
-          (id) => id === record.request_id,
-        ) !== -1
-          ? "bg-yellow-50"
-          : "";
-      }}
-    />
+        }}
+        loading={onLoad}
+        columns={tableColumns}
+        dataSource={history}
+        rowKey={(record) => record.changed_at}
+        pagination={false}
+        onRow={(record) => {
+          return {
+            onClick: () => {
+              navigate("/request/" + record.request.public_id);
+            },
+          };
+        }}
+        rowClassName={(record) => {
+          return onlyPendingRequests.findIndex(
+            (id) => id === record.request_id,
+          ) !== -1
+            ? "bg-yellow-50"
+            : "";
+        }}
+      />
+
+      <div className="mt-2 mb-3 flex items-center justify-between px-6">
+        <div className="text-gray-500">
+          Showing {start}–{end} of {totalItems}
+        </div>
+        <Pagination
+          current={currPage}
+          total={totalItems}
+          pageSize={10}
+          onChange={(page) => setCurrentPage(page)}
+          showSizeChanger={false}
+          showQuickJumper={true}
+        />
+      </div>
+    </>
   );
 };
 

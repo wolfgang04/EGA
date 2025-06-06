@@ -58,7 +58,11 @@ const Tool = () => {
 
       setTools((prevTools) => [
         ...prevTools,
-        { ...toolDetails, public_id: "" },
+        {
+          ...toolDetails,
+          public_id: "",
+          borrowers: { name: { first: "", last: "" }, request_id: -1 },
+        },
       ]);
     } catch (error) {
       console.log(error);

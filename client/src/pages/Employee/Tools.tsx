@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import SERVER from "../../SERVER";
 import Cart from "../../components/Employee/Tools/Cart";
 import FilterAndSearch from "../../components/Employee/Tools/FilterAndSearch";
-import { Button, Skeleton } from "antd";
+import { Button, message, Skeleton } from "antd";
 import ToolTable from "../../components/Employee/Tools/ToolTable";
 import { useSearchParams } from "react-router";
 import ToolsCard from "../../components/Employee/Tools/ToolsCard";
@@ -35,6 +35,8 @@ const Tools = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [displayParams, setDisplayParams] = useSearchParams();
   const [pageParams, setPageParams] = useSearchParams();
+
+  const [messageApi, contextHolder] = message.useMessage();
 
   const rawCategoryFilter = searchParams.get("category") || "";
   const categoryFilter =
@@ -83,12 +85,22 @@ const Tools = () => {
     fetchTools();
   }, [requestSent]);
 
+  const msg = (tool: string, type: "add" | "remove") => {
+    messageApi.open({
+      type: "success",
+      content:
+        type === "add" ? `added ${tool} to cart` : `removed ${tool} from cart`,
+    });
+  };
+
   const handleAddToCart = (tool: CART) => {
-    if (cart.find((cartTool) => cartTool.id === tool.id) === undefined)
+    if (cart.find((cartTool) => cartTool.id === tool.id) === undefined) {
       setCart((prevState) => [
         ...prevState,
         { ...tool, quantity: 1, note: "" } as CART,
       ]);
+      msg(tool.name, "add");
+    }
   };
 
   const handleChangeAmount = (id: string, newQuantity: number) => {
@@ -100,7 +112,9 @@ const Tools = () => {
   };
 
   const handleRemove = (id: string) => {
+    const tool = cart.find((tool) => tool.id === id);
     setCart((prevCart) => prevCart.filter((prev) => prev.id !== id));
+    msg(tool!.name, "remove");
   };
 
   const handleRequestTool = async (e: React.FormEvent) => {
@@ -118,6 +132,8 @@ const Tools = () => {
         { tools: cartWithoutName },
         { withCredentials: true },
       );
+
+      messageApi.open({ type: "success", content: "Submitted request" });
     } catch (error) {
       console.log(error);
     } finally {
@@ -128,6 +144,7 @@ const Tools = () => {
 
   return (
     <div className="text-center">
+      {contextHolder}
       <FilterAndSearch
         category={categoryFilter}
         searchVal={searchVal}

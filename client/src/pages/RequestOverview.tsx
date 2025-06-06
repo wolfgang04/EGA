@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import SERVER from "../SERVER";
 import type { RequestOverview, RequestStatus } from "../models/Request.model";
-import RequestToolTable from "../components/RequestOverview/RequestToolTable";
-import StatusTable from "../components/RequestOverview/StatusTable";
-import { Button, message } from "antd";
+import { message } from "antd";
+import Header from "../components/RequestOverview/Header";
+import Information from "../components/RequestOverview/Information";
+import Tools from "../components/RequestOverview/Tools";
+import Statuses from "../components/RequestOverview/Statuses";
 
 const RequestOverview = () => {
   const [requestDetails, setRequestDetails] = useState<RequestOverview>();
@@ -49,7 +51,7 @@ const RequestOverview = () => {
   }, [statusChanged]);
 
   // decides which option is displayed depending on the user's role and the current status
-  const disableBtn =
+  const isDisabled =
     (["returned", "denied", "approved", "borrowed"].includes(currStatus) &&
       role === "admin") ||
     (["pending", "returned"].includes(currStatus) && role === "employee");
@@ -94,55 +96,29 @@ const RequestOverview = () => {
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <>
       {contextHolder}
-      <p>Request ID: {requestDetails?.id}</p>
-      <p>
-        Request By:{" "}
-        {`${requestDetails?.requestByProfile?.name.last}, ${requestDetails?.requestByProfile?.name.first} ${requestDetails?.requestByProfile?.name.middle}`}
-      </p>
+      <Header id={requestDetails!.id} />
 
-      <RequestToolTable requests={requestDetails!.requestFiled} />
+      <Information
+        name={requestDetails!.requestByProfile?.name}
+        created={
+          requestDetails?.statuses[requestDetails.statuses.length - 1].changedAt
+        }
+        lastUpdated={requestDetails?.statuses[0].changedAt}
+      />
 
-      <div className="mt-4 flex gap-1">
-        <Button onClick={() => setIsVisible(!isVisible)} disabled={disableBtn}>
-          change status
-        </Button>
-        {isVisible && (
-          <>
-            <div className="flex flex-col items-start">
-              <select
-                id="status-select"
-                name="status"
-                value={currStatus}
-                onChange={(e) => setCurrStatus(e.target.value as RequestStatus)}
-                className=""
-              >
-                {nextStatuses.map((nextStatus) => (
-                  <option
-                    key={nextStatus}
-                    value={nextStatus}
-                    disabled={nextStatus === currStatus}
-                  >
-                    {nextStatus}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <Button
-              color="default"
-              variant="solid"
-              onClick={handleChangeStatus}
-              disabled={currStatus === initialStatus}
-            >
-              change
-            </Button>
-          </>
-        )}
-      </div>
-
-      <StatusTable statuses={requestDetails!.statuses} />
-    </div>
+      <Tools requestFiled={requestDetails!.requestFiled} />
+      <Statuses
+        nextStatuses={nextStatuses}
+        currStatus={currStatus}
+        handleChange={setCurrStatus}
+        statuses={requestDetails!.statuses}
+        isDisabled={isDisabled}
+        initialStatus={initialStatus}
+        onChangeStatus={handleChangeStatus}
+      />
+    </>
   );
 };
 
