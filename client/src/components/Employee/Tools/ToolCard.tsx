@@ -5,7 +5,7 @@ import { EnvironmentOutlined } from "@ant-design/icons";
 interface Tool {
   name: string;
   id: string;
-  available_quantity: number;
+  available_quantity: string;
   category_name: string;
   location: string;
   total_quantity: number;
@@ -42,9 +42,10 @@ const ToolCard: React.FC<Props> = ({ tool, isLoading, onAdd }) => {
               note: "",
               id: tool.id,
               name: tool.name,
-              max: tool.available_quantity,
+              max: Number(tool.available_quantity),
             })
           }
+          disabled={tool.available_quantity === "0"}
         >
           Add to Cart
         </Button>,

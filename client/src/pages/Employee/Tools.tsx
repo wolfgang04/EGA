@@ -1,21 +1,12 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import SERVER from "../../SERVER";
 import Cart from "../../components/Employee/Tools/Cart";
 import FilterAndSearch from "../../components/Employee/Tools/FilterAndSearch";
 import { Button, message, Skeleton } from "antd";
 import ToolTable from "../../components/Employee/Tools/ToolTable";
 import { useSearchParams } from "react-router";
 import ToolsCard from "../../components/Employee/Tools/ToolsCard";
-
-export interface Tool {
-  name: string;
-  id: string;
-  available_quantity: number;
-  category_name: string;
-  location: string;
-  total_quantity: number;
-}
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchTools, submitToolRequest } from "../../utils/api/tools";
 
 interface CART {
   quantity: number;
@@ -26,17 +17,14 @@ interface CART {
 }
 
 const Tools = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [tools, setTools] = useState<Tool[]>([]);
   const [cart, setCart] = useState<CART[]>([]);
   const [isVisible, setIsVisible] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [requestSent, setRequestSent] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [displayParams, setDisplayParams] = useSearchParams();
   const [pageParams, setPageParams] = useSearchParams();
 
   const [messageApi, contextHolder] = message.useMessage();
+  const queryClient = useQueryClient();
 
   const rawCategoryFilter = searchParams.get("category") || "";
   const categoryFilter =
@@ -55,35 +43,20 @@ const Tools = () => {
     }
   }, []);
 
+  const { data, isLoading } = useQuery({
+    queryKey: ["tools"],
+    queryFn: fetchTools,
+  });
+
+  const tools = data?.tools || [];
+  const categories = data?.categories || [];
+
   const filteredTools = tools.filter(
     (tool) =>
       (!categoryFilter ||
         tool.category_name.toLowerCase() === categoryFilter.toLowerCase()) &&
       tool.name.toLowerCase().includes(searchVal.toLowerCase()),
   );
-
-  useEffect(() => {
-    const fetchTools = async () => {
-      try {
-        const { data } = await axios.get(`${SERVER}/tool/all`, {
-          withCredentials: true,
-        });
-
-        setTools(data);
-        const { data: categories } = await axios.get(
-          SERVER + "/category/categories",
-          { withCredentials: true },
-        );
-        setCategories(categories);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTools();
-  }, [requestSent]);
 
   const msg = (tool: string, type: "add" | "remove") => {
     messageApi.open({
@@ -117,29 +90,24 @@ const Tools = () => {
     msg(tool!.name, "remove");
   };
 
-  const handleRequestTool = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (cart.length === 0) return;
-
-    try {
-      const cartWithoutName = cart.map(({ id, name, ...rest }) => ({
-        ...rest,
-        toolID: id,
-      }));
-
-      await axios.post(
-        `${SERVER}/request/create/tools`,
-        { tools: cartWithoutName },
-        { withCredentials: true },
-      );
-
+  const mutation = useMutation({
+    mutationFn: submitToolRequest,
+    onSuccess: () => {
       messageApi.open({ type: "success", content: "Submitted request" });
-    } catch (error) {
-      console.log(error);
-    } finally {
       setIsVisible(false);
-      setRequestSent((prevState) => !prevState);
-    }
+      setCart([]);
+
+      queryClient.invalidateQueries({ queryKey: ["histories"] });
+      queryClient.invalidateQueries({ queryKey: ["tools"] });
+    },
+    onError: () => {
+      messageApi.open({ type: "error", content: "Error submitting request" });
+    },
+  });
+
+  const handleRequestTool = (e: React.FormEvent) => {
+    e.preventDefault();
+    mutation.mutate(cart);
   };
 
   return (
