@@ -1,20 +1,15 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import SERVER from "../../SERVER";
-import { Histories } from "../../models/History.model";
 import HistoryTable from "../../components/Admin/Requests/HistoryTable";
 import { useSearchParams } from "react-router";
 import { Dayjs } from "dayjs";
 import DateSearch from "../../components/Admin/Requests/DateSearch";
+import { useQuery } from "@tanstack/react-query";
+import { fetchHistory } from "../../utils/api/history";
 
 type PickerMode = "date" | "week" | "month" | "year" | undefined;
 
 const AdminDashboard = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [histories, setHistories] = useState<Histories>([]);
-  const [totalItems, setTotalItems] = useState(0);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState(false);
   const [pageParams, setPageParams] = useSearchParams();
   const [dateOption, setDateOption] = useState<PickerMode>();
   const [date, setDate] = useState<Dayjs | null>(null);
@@ -26,41 +21,32 @@ const AdminDashboard = () => {
   const dateOptions: PickerMode[] = ["date", "week", "month", "year"];
 
   useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const res = await axios.get<{ count: number; rows: Histories }>(
-          `${SERVER}/request/requests`,
-          {
-            withCredentials: true,
-            params: {
-              page,
-              filter: search,
-              date: date?.format("YYYY-MM-DD"),
-              dateType: date && dateOption === undefined ? "date" : dateOption,
-              sort: sort.toUpperCase(),
-            },
-          },
-        );
-
-        setHistories(res.data.rows);
-        setTotalItems(res.data.count);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchHistory();
     const currPage = pageParams.get("page");
     if (!currPage) {
       pageParams.set("page", "1");
       setPageParams(pageParams);
     }
-  }, [page, filter]);
+  }, [pageParams, setPageParams]);
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: [
+      "histories",
+      page,
+      search,
+      date?.format("YYYY-MM-DD"),
+      dateOption,
+      sort,
+    ],
+    queryFn: () => fetchHistory(page, search, date, dateOption, sort),
+  });
+
+  const histories = data?.rows || [];
+  const totalItems = data?.count || 0;
+
+  console.log(histories);
 
   const handleSumbit = () => {
-    setFilter((prevFilter) => !prevFilter);
+    refetch();
   };
 
   return (
