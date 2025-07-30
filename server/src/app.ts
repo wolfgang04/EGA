@@ -1,37 +1,23 @@
 import express from "express";
 import cors from "cors";
-import session from "express-session";
-import { CLIENT_URL, SECRET } from "./constants";
+import { CLIENT_URL } from "./constants";
 import authRoutes from "./routes/auth.route";
-import { authMiddleware } from "./controllers/middleware.controller";
+import { authMiddleware } from "./middlewares/auth.middleware";
 import userRoutes from "./routes/user.route";
 import categoryRoutes from "./routes/category.route";
 import toolRoutes from "./routes/tool.route";
 import requestRoutes from "./routes/request.route";
+import cookieParser from "cookie-parser";
 
 const app: express.Application = express();
 
 app.set("trust proxy", 1);
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
     origin: CLIENT_URL,
     credentials: true,
-  })
-);
-
-app.use(
-  session({
-    name: "qid",
-    cookie: {
-      maxAge: 1000 * 60 * 20,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    },
-    saveUninitialized: false,
-    secret: SECRET || "default secret",
-    resave: false,
   })
 );
 

@@ -4,13 +4,7 @@ import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../constants";
 import { validatePasswordInput } from "../utils/input";
 import { CreateAccountRequestBody } from "../models/Request.model";
-
-declare module "express-session" {
-  interface SessionData {
-    userID: number;
-    accType: "admin" | "employee";
-  }
-}
+import { issue } from "../utils/auth";
 
 export const createAccount = async (
   req: Request<{}, {}, CreateAccountRequestBody>,
@@ -44,8 +38,8 @@ export const createAccount = async (
 
     const user = await User.create({
       password: hashedPassword,
-      userType,
-      created_by: Number(req.session.userID),
+      userType: req.user.accType,
+      created_by: Number(req.user.userId),
     });
 
     await Profile.create({
@@ -87,15 +81,22 @@ export const login = async (req: Request, res: Response): Promise<any> => {
 
     const isMatch = await bcrypt.compare(password, user!.password);
 
-    if (isMatch) {
-      req.session.userID = user!.id;
-      req.session.accType = user.userType;
-      return res
-        .status(200)
-        .json({ msg: "Logged in successfully!", accType: user.userType });
-    }
+    if (!isMatch) return res.status(401).json({ msg: "Invalid credentials" });
 
-    return res.status(401).json({ msg: "Invalid credentials" });
+    const token = issue({ userId: user.id, accType: user.userType });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 30 * 60 * 1000,
+    });
+
+    console.log(token, req.user);
+
+    return res
+      .status(200)
+      .json({ msg: "Logged in successfully!", accType: user.userType });
   } catch (err) {
     if (err instanceof Error) {
       console.error("Error logging in:", err);
@@ -107,16 +108,9 @@ export const login = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
-export const logout = async (req: Request, res: Response): Promise<any> => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Error destroying session:", err);
-      return res.status(500).json({ msg: "Failed to log out" });
-    }
-
-    res.clearCookie("qid");
-    return res.status(200).json({ msg: "Logged out successfully" });
-  });
+export const logout = async (_req: Request, res: Response): Promise<any> => {
+  res.clearCookie("token");
+  return res.status(200).json({ msg: "Logged out successfully" });
 };
 
 export const resetDefaultPass = async (
@@ -133,7 +127,9 @@ export const resetDefaultPass = async (
   try {
     const hashedPassword = await bcrypt.hash(password.trim(), SALT_ROUNDS);
 
-    const user = await User.findOne({ where: { id: req.session.userID } });
+    const user = await User.findOne({
+      where: { id: req.user.userId },
+    });
     if (!user) return res.status(404).json({ msg: "User not found" });
 
     user.password = hashedPassword;
@@ -152,11 +148,13 @@ export const resetDefaultPass = async (
 };
 
 export const authCheck = (req: Request, res: Response): Promise<any> => {
+  console.log(req.user);
+
   return new Promise((resolve) => {
-    if (!req.session.userID) {
+    if (!req.user) {
       resolve(res.status(401).json({ msg: "Unauthorized" }));
     } else {
-      resolve(res.status(200).json({ accType: req.session.accType }));
+      resolve(res.status(200).json({ accType: req.user.accType }));
     }
   });
 };

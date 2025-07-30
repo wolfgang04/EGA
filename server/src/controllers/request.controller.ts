@@ -26,7 +26,7 @@ export const requestTools = async (
   const transaction = await sequelize.transaction();
   try {
     const generateReq = await request.create(
-      { requestBy: req.session.userID! },
+      { requestBy: req.user.userId },
       { transaction }
     );
 
@@ -44,7 +44,7 @@ export const requestTools = async (
 
     await RequestHistory.create(
       {
-        changedBy: req.session.userID!,
+        changedBy: req.user.userId,
         requestID: generateReq.id,
       },
       { transaction }
@@ -199,7 +199,7 @@ export const changeRequestStatus = async (
 
     await RequestHistory.create({
       status,
-      changedBy: req.session.userID!,
+      changedBy: req.user.userId,
       requestID: reqq.id,
     });
 
@@ -286,7 +286,7 @@ export const getUserOngoingRequest = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const user = Number(req.session.userID);
+  const user = Number(req.user.userId);
 
   try {
     const results = await sequelize.query(
@@ -329,7 +329,7 @@ export const prevRequests = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const user = Number(req.session.userID);
+  const user = Number(req.user.userId);
 
   try {
     const userChanges = await RequestHistory.findAndCountAll({

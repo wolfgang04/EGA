@@ -78,7 +78,7 @@ export const getUser = async (req: Request, res: Response): Promise<any> => {
 };
 
 export const profile = async (req: Request, res: Response): Promise<any> => {
-  const id = Number(req.session.userID);
+  const id = Number(req.user.userId);
 
   try {
     const profile = await Profile.findByPk(id, {
