@@ -1,103 +1,86 @@
-# EGA Inventory Management System
+# 🛠️ EGA — Inventory Management System
 
-A full-stack web application for managing tool and equipment inventory within an organization. Employees can browse available tools and submit borrow requests, while administrators can manage inventory, users, categories, and the full request lifecycle.
+> *Tired of sticky notes and spreadsheets to track who borrowed what? So were we.*
 
----
+EGA is a full-stack tool and equipment inventory system built for organizations that actually need to know where their tools are. Employees can browse what's available, drop items into a request cart, and track their borrows — all in one place. Admins get a clean dashboard to approve requests, manage inventory, and keep an audit trail of every status change.
 
-## Table of Contents
-
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Environment Variables](#environment-variables)
-  - [Database Setup](#database-setup)
-  - [Installation](#installation)
-  - [Running the App](#running-the-app)
-- [Available Scripts](#available-scripts)
-- [API Reference](#api-reference)
-- [Database Schema](#database-schema)
-- [Request Workflow](#request-workflow)
+No more "I thought someone else returned it."
 
 ---
 
-## Features
+## ✨ What Can It Do?
 
-### Employee
-- Browse tools by category with real-time availability
-- Add tools to a request cart with quantity and notes
-- Submit batch tool requests
-- Track ongoing requests and view request history
-- Manage personal profile
+### For Employees
+Browsing the tool inventory feels like shopping — tools are organized by category, availability is shown in real time, and you can add multiple items to a single request with custom quantities and notes. Once submitted, you can follow the status of every request from pending all the way to returned.
 
-### Admin
-- Manage tool inventory (create, edit tools with location and quantity)
-- Manage categories
-- Create and manage employee accounts
-- Review all requests and update their status
-- Filter request history by date range
-- Dashboard with request analytics
+- 🔍 Browse tools by category with live availability counts
+- 🛒 Build a multi-tool request in one go, with per-item notes
+- 📋 Track ongoing borrows and review your full request history
+- 👤 Manage your personal profile
+
+### For Admins
+Admins hold the keys. They see every request across the organization, update statuses as tools move in and out, and have full control over what's in the catalog.
+
+- 📦 Add and edit tools (name, category, location, quantity)
+- 🗂️ Create and manage tool categories
+- 👥 Create and manage employee accounts
+- ✅ Approve, deny, mark as borrowed, mark as returned
+- 📅 Filter request history by date range
+- 📊 Dashboard overview of request activity
 
 ---
 
-## Tech Stack
+## 🏗️ How It's Built
 
-| Layer | Technology |
+EGA is a monorepo with a React frontend and a Node.js backend, talking to a PostgreSQL database.
+
+| Layer | What's powering it |
 |---|---|
 | **Frontend** | React 19, TypeScript, Vite, TailwindCSS 4, Ant Design, React Router 7, TanStack React Query, Axios |
 | **Backend** | Node.js, Express 5, TypeScript |
-| **Database** | PostgreSQL (primary), Sequelize ORM |
-| **Auth** | JWT (stored in HTTP-only cookies), bcrypt |
-| **Dev Tools** | Nodemon, ESLint, Prettier, Concurrently |
+| **Database** | PostgreSQL + Sequelize ORM |
+| **Auth** | JWT stored in HTTP-only cookies, bcrypt for passwords |
+| **Dev Tooling** | Nodemon, ESLint, Prettier, Concurrently |
 
----
-
-## Project Structure
+The project is split cleanly into two workspaces:
 
 ```
 EGA/
 ├── client/                  # React + TypeScript frontend
-│   ├── src/
-│   │   ├── components/      # Reusable UI components (Admin, Employee, shared)
-│   │   ├── pages/           # Page-level components
-│   │   └── utils/           # API helpers
-│   ├── vite.config.ts
-│   └── package.json
+│   └── src/
+│       ├── components/      # UI building blocks (Admin, Employee, shared)
+│       ├── pages/           # Top-level route views
+│       └── utils/           # API helpers and shared utilities
 │
 ├── server/                  # Express + TypeScript backend
 │   ├── src/
-│   │   ├── controllers/     # Business logic
+│   │   ├── controllers/     # Business logic per domain
 │   │   ├── routes/          # API route definitions
-│   │   ├── models/          # Sequelize models and associations
+│   │   ├── models/          # Sequelize models + associations
 │   │   ├── middlewares/     # JWT auth middleware
 │   │   └── utils/           # DB config, JWT helpers, validators
-│   ├── db.sql               # PostgreSQL schema
-│   └── package.json
+│   └── db.sql               # PostgreSQL schema (tables, enums, triggers)
 │
-├── package.json             # Root workspace scripts
-└── README.md
+└── package.json             # Root scripts (runs both sides at once)
 ```
 
 ---
 
-## Getting Started
+## 🚀 Getting It Running
 
-### Prerequisites
+Before you start, make sure you have these installed:
 
-- **Node.js** v18 or higher
-- **npm** v9 or higher
-- **PostgreSQL** v14 or higher
+- **Node.js** v18+
+- **npm** v9+
+- **PostgreSQL** v14+
 
-### Environment Variables
+### Step 1 — Set up your environment
 
-Create a `.env` file inside the `server/` directory. You can copy the example file:
+Copy the example env file and fill it in:
 
 ```bash
 cp server/.env.example server/.env
 ```
-
-Then fill in the values:
 
 ```env
 PORT=8080
@@ -116,160 +99,149 @@ SALT_ROUNDS=10
 JWT_SECRET=your_jwt_secret
 ```
 
-### Database Setup
+### Step 2 — Set up the database
 
-1. Create the `ega` database in PostgreSQL:
-   ```sql
-   CREATE DATABASE ega;
-   ```
+Create the database, then run the schema script to spin up all tables, enums, and triggers in one shot:
 
-2. Run the provided schema script to create all tables, enums, and triggers:
-   ```bash
-   psql -U your_db_user -d ega -f server/db.sql
-   ```
+```bash
+# Create the database
+psql -U your_db_user -c "CREATE DATABASE ega;"
 
-### Installation
+# Apply the schema
+psql -U your_db_user -d ega -f server/db.sql
+```
 
-Install all dependencies for both the client and server from the root:
+### Step 3 — Install dependencies
+
+One command installs everything for both the frontend and backend:
 
 ```bash
 npm install
 ```
 
-### Running the App
-
-Start both the frontend (port 3000) and backend (port 8080) concurrently:
+### Step 4 — Start the app
 
 ```bash
 npm run start
 ```
 
+That's it. Both services boot up concurrently:
+
 | Service | URL |
 |---|---|
-| Frontend | http://localhost:3000 |
-| Backend API | http://localhost:8080 |
+| 🖥️ Frontend | http://localhost:3000 |
+| ⚙️ Backend API | http://localhost:8080 |
 
 ---
 
-## Available Scripts
+## 🧰 Useful Scripts
 
-### Root
+**From the root** (controls both services):
+```bash
+npm run start   # Start frontend + backend together
+npm test        # Run tests
+```
 
-| Script | Description |
-|---|---|
-| `npm run start` | Start frontend and backend concurrently |
-| `npm test` | Run tests |
+**Inside `client/`** (frontend only):
+```bash
+npm run dev     # Vite dev server with hot reload
+npm run build   # Type-check + production bundle
+npm run preview # Preview the production build locally
+npm run lint    # ESLint check
+```
 
-### Client (`/client`)
-
-| Script | Description |
-|---|---|
-| `npm run dev` | Start Vite dev server |
-| `npm run build` | Type-check and build for production |
-| `npm run preview` | Preview the production build |
-| `npm run lint` | Run ESLint |
-
-### Server (`/server`)
-
-| Script | Description |
-|---|---|
-| `npm run start` | Start server with nodemon (auto-reload) |
+**Inside `server/`** (backend only):
+```bash
+npm run start   # Start with nodemon (auto-restarts on file changes)
+```
 
 ---
 
-## API Reference
+## 🔌 API Reference
 
-All endpoints are prefixed with `/api`.
+All routes live under `/api`. Authentication is handled via JWT cookies — log in once and the cookie does the rest.
 
-### Auth
-
-| Method | Endpoint | Description |
+### 🔐 Auth
+| Method | Endpoint | What it does |
 |---|---|---|
-| `POST` | `/auth/create` | Create a new user account |
-| `POST` | `/auth/login` | Log in and receive JWT cookie |
-| `POST` | `/auth/logout` | Log out and clear cookie |
-| `POST` | `/auth/resetDefaultPass` | Reset password to default |
-| `GET` | `/auth/authCheck` | Verify current authentication |
+| `POST` | `/auth/create` | Register a new user account |
+| `POST` | `/auth/login` | Log in and set the JWT cookie |
+| `POST` | `/auth/logout` | Log out and clear the cookie |
+| `POST` | `/auth/resetDefaultPass` | Reset a password to its default |
+| `GET` | `/auth/authCheck` | Verify the current session |
 
-### Users
-
-| Method | Endpoint | Description |
+### 👤 Users
+| Method | Endpoint | What it does |
 |---|---|---|
-| `GET` | `/user/*` | Get user information |
+| `GET` | `/user/*` | Fetch user information |
 | `POST` | `/user/*` | Update user information |
 
-### Categories
-
-| Method | Endpoint | Description |
+### 🗂️ Categories
+| Method | Endpoint | What it does |
 |---|---|---|
 | `POST` | `/category/create` | Create a new category |
 | `GET` | `/category/categories` | List all categories |
-| `GET` | `/category/categoriesOverview` | Category overview with tool counts |
+| `GET` | `/category/categoriesOverview` | Categories with tool counts |
 
-### Tools
-
-| Method | Endpoint | Description |
+### 🔧 Tools
+| Method | Endpoint | What it does |
 |---|---|---|
-| `POST` | `/tool/create` | Create a new tool |
-| `GET` | `/tool/tools/:id` | Get tools for a specific category |
-| `GET` | `/tool/all` | Get all tools |
-| `POST` | `/tool/edit/:id` | Edit a tool |
+| `POST` | `/tool/create` | Add a new tool to inventory |
+| `GET` | `/tool/tools/:id` | Get tools in a specific category |
+| `GET` | `/tool/all` | Get the full tool list |
+| `POST` | `/tool/edit/:id` | Update a tool's details |
 
-### Requests
-
-| Method | Endpoint | Description |
+### 📬 Requests
+| Method | Endpoint | What it does |
 |---|---|---|
-| `POST` | `/request/create/tools` | Submit a tool request |
-| `GET` | `/request/requests` | Get request updates |
-| `POST` | `/request/status` | Update request status (Admin) |
-| `GET` | `/request/overview/:id` | Get full request details |
-| `GET` | `/request/ongoing` | Get current user's ongoing requests |
-| `GET` | `/request/previous` | Get current user's request history |
+| `POST` | `/request/create/tools` | Submit a new tool request |
+| `GET` | `/request/requests` | Get request status updates |
+| `POST` | `/request/status` | Change a request's status (Admin) |
+| `GET` | `/request/overview/:id` | Full details for one request |
+| `GET` | `/request/ongoing` | Current user's active borrows |
+| `GET` | `/request/previous` | Current user's past requests |
 
 ---
 
-## Database Schema
+## 🗄️ Under the Hood — Database Design
 
-The PostgreSQL database consists of the following tables:
+The schema is built around a simple idea: track tools, who asked for them, and what happened at every step.
 
-| Table | Description |
+| Table | Purpose |
 |---|---|
-| `user_auth` | User accounts with role (`admin` / `employee`) and hashed password |
-| `profile` | User profile details (name, email, contact, address, birthday, image) |
-| `category` | Tool categories |
-| `tool` | Inventory items linked to a category, with location and quantity |
-| `request` | A borrow request submitted by an employee |
-| `request_tool` | Junction table linking requests to specific tools with quantity and notes |
-| `request_status_history` | Audit trail of all status changes, with timestamps and actor |
+| `user_auth` | Accounts with role (`admin` / `employee`) and hashed password |
+| `profile` | Personal details — name, email, contact, address, birthday, photo |
+| `category` | Groups of related tools |
+| `tool` | Individual inventory items with location and quantity |
+| `request` | A borrow request from an employee |
+| `request_tool` | Which tools are in a request, with quantity and notes |
+| `request_status_history` | Full audit log — every status change, who made it, and when |
 
-**Status lifecycle:** `pending` → `approved` / `denied` → `borrowed` → `returned`
-
-PostgreSQL triggers automatically generate human-readable public IDs:
-- Profiles: `emp-{id}` / `adm-{id}`
-- Tools: `tl-{id}`
-- Requests: `rq-{id}`
+Every entity gets a human-readable public ID generated automatically by PostgreSQL triggers — so instead of seeing `id: 42`, you see `emp-42`, `tl-17`, or `rq-5`. Much friendlier.
 
 ---
 
-## Request Workflow
+## 🔄 The Request Lifecycle
+
+A request travels through a well-defined set of states. Here's the full picture:
 
 ```
-Employee creates request
-        │
-        ▼
-   [pending]
-        │
-   Admin reviews
-        │
-   ┌────┴────┐
-   ▼         ▼
-[approved] [denied]
-   │
-   ▼
-[borrowed]  ← Admin marks as borrowed when tool is handed over
-   │
-   ▼
-[returned]  ← Admin marks as returned when tool is given back
+Employee submits request
+         │
+         ▼
+     [pending]  ← waiting for admin review
+         │
+    Admin decides
+         │
+    ┌────┴────┐
+    ▼         ▼
+[approved]  [denied]
+    │
+    ▼
+[borrowed]  ← tool physically handed over
+    │
+    ▼
+[returned]  ← tool back in inventory
 ```
 
-Each status transition is recorded in `request_status_history` with the actor and timestamp.
+Every arrow in that diagram is a row in `request_status_history` — timestamped, attributed to the person who made the change, and permanent. Nothing gets quietly overwritten.
