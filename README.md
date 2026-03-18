@@ -4,6 +4,14 @@
 
 This project was born from a real need. A client came to us frustrated — tools were going missing, nobody could say who had what, and the "system" was a combination of memory, handwritten logs, and the occasional argument. They needed something proper: a real tracking system where every borrow is requested, approved, and recorded.
 
+Manual tracking of borrowed tools carries real risks:
+
+- **Lost or unaccounted tools** — without a written record, items disappear with no trail to follow
+- **No accountability** — when nothing is logged, there's no way to know who last had a tool or when it was supposed to come back
+- **Disputes and confusion** — conflicting memories lead to arguments between employees and management
+- **Inventory blind spots** — managers can't see what's available in real time, causing duplicate purchases or work delays when a needed tool turns out to be gone
+- **Audit gaps** — if something breaks or goes missing, there's no history to review, making it impossible to investigate or assign responsibility
+
 EGA is that system. It's a full-stack tool and equipment inventory app where employees can browse available tools, submit borrow requests, and follow every request from submission to return — all in one place. Admins get a clean dashboard to approve requests, manage the catalog, and maintain a complete audit trail of every status change.
 
 No more "I thought someone else returned it."
