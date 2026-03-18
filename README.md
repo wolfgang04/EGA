@@ -1,8 +1,10 @@
 # 🛠️ EGA — Inventory Management System
 
-> *Tired of sticky notes and spreadsheets to track who borrowed what? So were we.*
+> *Tired of sticky notes and spreadsheets to track who borrowed what? So was our client.*
 
-EGA is a full-stack tool and equipment inventory system built for organizations that actually need to know where their tools are. Employees can browse what's available, drop items into a request cart, and track their borrows — all in one place. Admins get a clean dashboard to approve requests, manage inventory, and keep an audit trail of every status change.
+This project was born from a real need. A client came to us frustrated — tools were going missing, nobody could say who had what, and the "system" was a combination of memory, handwritten logs, and the occasional argument. They needed something proper: a real tracking system where every borrow is requested, approved, and recorded.
+
+EGA is that system. It's a full-stack tool and equipment inventory app where employees can browse available tools, submit borrow requests, and follow every request from submission to return — all in one place. Admins get a clean dashboard to approve requests, manage the catalog, and maintain a complete audit trail of every status change.
 
 No more "I thought someone else returned it."
 
