@@ -2,6 +2,7 @@
   "name": "client",
   "private": true,
   "version": "0.0.0",
+  "description": "React + TypeScript frontend for EGA — tool and equipment inventory management system with employee and admin interfaces.",
   "type": "module",
   "scripts": {
     "dev": "vite",
