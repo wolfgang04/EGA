@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Express + TypeScript backend for EGA — handles authentication, tool inventory, borrow requests, and audit trail via PostgreSQL and Sequelize.",
   "main": "./src/server.ts",
   "scripts": {
     "start": "nodemon ./src/server.ts",

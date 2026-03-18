@@ -1,4 +1,7 @@
 {
+  "name": "ega",
+  "version": "1.0.0",
+  "description": "Full-stack tool and equipment inventory management system — employees can browse tools, submit borrow requests, and track their status, while admins manage the catalog, approve requests, and maintain a complete audit trail of every status change.",
   "scripts": {
     "prestart": "kill-port 8080",
     "start": "concurrently \"npm run dev --prefix client\" \"npm run start --prefix server\"",
